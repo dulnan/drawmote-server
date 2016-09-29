@@ -1,0 +1,62 @@
+@import "partials/_variables";
+@import "partials/_normalize";
+@import "partials/_general";
+// @import "partials/_drawingboard";
+
+.canvas-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+#canvas {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate3d(0,0,0);
+}
+
+#brush-anchor {
+    width: 1px;
+    height: 1px;
+    position: relative;
+    transition: 0.09s transform cubic-bezier(0, 0.94, 1, 1);
+}
+
+#brush-circle {
+    width: 200px;
+    height: 200px;
+    box-sizing: border-box;
+    border-radius: 100%;
+    position: absolute;
+    top: -100px;
+    left: -100px;
+}
+
+#data {
+    display: flex;
+    position: fixed;
+    width: 100vw;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 1em;
+}
+
+.data-item {
+    flex: 1 1;
+}
+
+.data-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8em;
+}
+
+.data-value {
+    font-weight: 100;
+    font-size: 1.6em;
+}

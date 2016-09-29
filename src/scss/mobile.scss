@@ -1,0 +1,126 @@
+@import "partials/_variables";
+@import "partials/_normalize";
+@import "partials/_general";
+
+html {
+
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    touch-action: manipulation;
+}
+
+* {
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.mobile-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#brush-circle {
+    height: 200px;
+    width: 200px;
+    transform: scale(0.5);
+    transition: 0.2s background;
+    border-radius: 100%;
+}
+
+.debug {
+    position: absolute;
+    bottom: 0;
+    display: none;
+    width: 100%;
+}
+
+.size-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 5vh;
+    box-sizing: border-box;
+}
+
+.size-input {
+    width: 100%;
+    -webkit-appearance: none;
+    background: transparent;
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 4vh;
+        height: 4vh;
+        margin-top: -1.5vh;
+        background: $grey;
+        border-radius: 100%;
+        border: 0;
+    }
+    &::-webkit-slider-runnable-track {
+        background: $grey-light;
+        height: 1vh;
+        border-radius: 1vh;
+    }
+    &:focus {
+        outline: none;
+    }
+}
+
+
+.colors-container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    // border-bottom: 1px solid $grey-light;
+}
+
+.colors-form {
+    margin: 0;
+}
+
+.colors-fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.colors-list {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 5vw;
+    box-sizing: border-box;
+}
+
+.color-item {
+    flex: 0;
+    list-style: none;
+    display: block;
+}
+
+.color-input {
+    appearance: none;
+    border: 0;
+    border-radius: 100%;
+    height: 12vw;
+    width: 12vw;
+    transform: scale(0.5);
+    transition: 0.3s cubic-bezier(.53,-0.37,.47,1.42);
+    opacity: 0.5;
+    &:checked {
+        transform: scale(1);
+        opacity: 1;
+        outline: none;
+    }
+}

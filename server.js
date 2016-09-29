@@ -44,4 +44,10 @@ io.sockets.on('connection', function(socket) {
             deskSocket.emit('orientation', orientation);
         }
     });
+
+    socket.on('brush-change', function(brush) {
+        if(typeof(deskSocket) !== "undefined" && deskSocket !== null) {
+            deskSocket.emit('brush-change', brush);
+        }
+    });
 });

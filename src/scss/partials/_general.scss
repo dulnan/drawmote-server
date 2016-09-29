@@ -1,0 +1,29 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "BlinkMacSystemFont", sans-serif;
+    font-size: 16px;
+    color: $text;
+}
+
+.bg--lightgrey {
+    background: $grey-extralight;
+}
+
+.bg--blue {
+    background: $blue;
+}
+
+.bg--green {
+    background: $green;
+}
+
+.bg--yellow {
+    background: $yellow;
+}
+
+.bg--red {
+    background: $red;
+}
+
+.bg--black {
+    background: $black;
+}
