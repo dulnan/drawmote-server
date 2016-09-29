@@ -9,7 +9,7 @@ html(lang='en')
         script(type="text/javascript", src="/js/mobile-data.js")
         script(type="text/javascript", src="/socket.io/socket.io.js")
 body(class="mobile",data-id=id)
-    div(class="mobile-container")
+    div(class="mobile-container container-palette")
         div(id="brush-container")
             div(id="brush-circle",class="bg--blue")
         div(class="debug")
@@ -21,7 +21,7 @@ body(class="mobile",data-id=id)
                 fieldset(class="colors-fieldset")
                     ul(class="colors-list")
                         li(class="color-item")
-                            input(type="radio",name="color",class="color-input color-input--lightgrey bg--lightgrey",value="lightgrey",checked)
+                            input(type="radio",name="color",class="color-input color-input--lightgrey bg--greyExtraLight",value="greyExtraLight",checked)
                         li(class="color-item")
                             input(type="radio",name="color",class="color-input color-input--blue bg--blue",value="blue",checked)
                         li(class="color-item")
@@ -32,3 +32,33 @@ body(class="mobile",data-id=id)
                             input(type="radio",name="color",class="color-input color-input--red bg--red",value="red")
                         li(class="color-item")
                             input(type="radio",name="color",class="color-input color-input--black bg--black",value="black")
+    div(class="mobile-container container-setup")
+        div(class="setup-wrapper")
+            h1(class="setup-title") drawmote
+            div(class="code-container")
+                div(class="code-entered")
+                    div(class="code-entered-num code-entered-num--1")
+                    div(class="code-entered-num code-entered-num--2")
+                    div(class="code-entered-num code-entered-num--3")
+                    div(class="code-entered-num code-entered-num--4")
+                div(class="code-numpad")
+                    div(class="code-numpad-num code-numpad-num--1",data-num="1")
+                        div(class="code-numpad-num-text") 1
+                    div(class="code-numpad-num code-numpad-num--2",data-num="2")
+                        div(class="code-numpad-num-text") 2
+                    div(class="code-numpad-num code-numpad-num--3",data-num="3")
+                        div(class="code-numpad-num-text") 3
+                    div(class="code-numpad-num code-numpad-num--4",data-num="4")
+                        div(class="code-numpad-num-text") 4
+                    div(class="code-numpad-num code-numpad-num--5",data-num="5")
+                        div(class="code-numpad-num-text") 5
+                    div(class="code-numpad-num code-numpad-num--6",data-num="6")
+                        div(class="code-numpad-num-text") 6
+                    div(class="code-numpad-num code-numpad-num--7",data-num="7")
+                        div(class="code-numpad-num-text") 7
+                    div(class="code-numpad-num code-numpad-num--8",data-num="8")
+                        div(class="code-numpad-num-text") 8
+                    div(class="code-numpad-num code-numpad-num--9",data-num="9")
+                        div(class="code-numpad-num-text") 9
+                    div(class="code-numpad-num code-numpad-num--0",data-num="0")
+                        div(class="code-numpad-num-text") 0

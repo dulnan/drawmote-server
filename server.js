@@ -50,4 +50,10 @@ io.sockets.on('connection', function(socket) {
             deskSocket.emit('brush-change', brush);
         }
     });
+
+    socket.on('brush-state', function(brushState) {
+        if(typeof(deskSocket) !== "undefined" && deskSocket !== null) {
+            deskSocket.emit('brush-state', brushState);
+        }
+    });
 });

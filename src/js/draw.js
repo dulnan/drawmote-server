@@ -1,3 +1,22 @@
+var cursorX = 0;
+var cursorY = 0;
+var cursorXprev = 0;
+var cursorYprev = 0;
+var brushState = "move";
+var brushStateChanged = false;
+
+var colors = {
+    text:              "#121212",
+    greyExtraLight:    "#faf8f5",
+    greyLight:         "#edeeec",
+    grey:              "#bebfbb",
+    blue:              "#c4e8f7",
+    green:             "#b8ddbe",
+    yellow:            "#fdbc4b",
+    red:               "#fd794b",
+    black:             "#383c47"
+};
+
 (function() {
 	$(document).ready(function() {
 
@@ -16,7 +35,8 @@
 		var init = function(e) {
             setWindowSize();
             $(window).bind('orientation-change', orientationHandler);
-			$(window).bind('brush-change', brushChangeHandler);
+            $(window).bind('brush-change', brushChangeHandler);
+			$(window).bind('brush-state', brushStateHandler);
 		};
 
         var setWindowSize = function() {
@@ -29,7 +49,16 @@
             $("#brush-circle").addClass("bg--" + data.color);
 
             scale = scaleBetween(data.size, 0.1,1,10,200);
-            $("#brush-anchor").css("transform", "translate3d("+translateX+"px,"+translateY+"px,0) scale("+scale+")");
+            $("#brush-circle").css("transform", "scale("+scale+")");
+
+            sketchpad.color = colors[data.color];
+            sketchpad.penSize = data.size;
+
+        };
+
+        var brushStateHandler = function(e, data) {
+            brushState = data;
+            brushStateChanged = true;
         };
 
 
@@ -44,9 +73,6 @@
 		};
 
 		var runFrame = function() {
-
-            var betaBase = scaleBetween(orientation.beta,0,1,-20,20,true);
-
             if (orientation.alpha > 180) {
                 var alphaBase = Math.abs((orientation.alpha - 180) - 180);
             } else {
@@ -55,13 +81,40 @@
 
             alphaBase = scaleBetween(alphaBase,0,1,-30,30,true);
 
+            var betaBase = scaleBetween(orientation.beta,0,1,-20,20,true);
+
             translateX = alphaBase;
             translateY = -betaBase;
 
             translateX = (Math.abs(translateX)) * windowWidth;
             translateY = (1 - Math.abs(translateY)) * windowHeight;
 
-            $("#brush-anchor").css("transform", "translate3d("+translateX+"px,"+translateY+"px,0) scale("+scale+")");
+            if (Math.abs(translateX - cursorXprev) > 2) {
+                cursorX = translateX;
+                cursorXprev = cursorX;
+            }
+
+            if (Math.abs(translateY - cursorYprev) > 2) {
+                cursorY = translateY;
+                cursorYprev = cursorY;
+            }
+
+
+            $("#brush-anchor").css("transform", "translate3d("+cursorX+"px,"+cursorY+"px,0)");
+
+            if (brushState == "draw") {
+                if (brushStateChanged == true) {
+                    $("#canvas").trigger("brush:down");
+                    brushStateChanged = false;
+                } else {
+                    $("#canvas").trigger("brush:move");
+                }
+            } else {
+                if (brushStateChanged == true) {
+                    $("#canvas").trigger("brush:up");
+                    brushStateChanged = false;
+                }
+            }
 
             $(".data-item--gamma .data-value").html(orientation.gamma.toFixed(2));
             $(".data-item--beta .data-value").html(orientation.beta.toFixed(2));

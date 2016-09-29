@@ -80,10 +80,10 @@ function Sketchpad(config) {
 // Private API
 //
 
-Sketchpad.prototype._cursorPosition = function(event) {
+Sketchpad.prototype._cursorPosition = function() {
   return {
-    x: event.pageX - $(this.canvas).offset().left,
-    y: event.pageY - $(this.canvas).offset().top,
+    x: cursorX,
+    y: cursorY
   };
 };
 
@@ -115,79 +115,28 @@ Sketchpad.prototype._stroke = function(start, end, color, size, compositeOperati
 // Callback Handlers
 //
 
-Sketchpad.prototype._mouseDown = function(event) {
-  this._lastPosition = this._cursorPosition(event);
+Sketchpad.prototype._brushDown = function(event) {
+  console.log("brushdown")
+  this._lastPosition = this._cursorPosition();
   this._currentStroke.color = this.color;
   this._currentStroke.size = this.penSize;
   this._currentStroke.lines = [];
   this._sketching = true;
-  this.canvas.addEventListener('mousemove', this._mouseMove);
+  $(this.canvas).on("brush:move", this._brushMove);
 };
 
-Sketchpad.prototype._mouseUp = function(event) {
+Sketchpad.prototype._brushUp = function(event) {
+  console.log("brushup")
   if (this._sketching) {
     this.strokes.push($.extend(true, {}, this._currentStroke));
     this._sketching = false;
   }
-  this.canvas.removeEventListener('mousemove', this._mouseMove);
+  $(this.canvas).off("brush:move", this._brushMove);
 };
 
-Sketchpad.prototype._mouseMove = function(event) {
-  var currentPosition = this._cursorPosition(event);
-
-  this._draw(this._lastPosition, currentPosition, this.color, this.penSize);
-  this._currentStroke.lines.push({
-    start: $.extend(true, {}, this._lastPosition),
-    end: $.extend(true, {}, currentPosition),
-  });
-
-  this._lastPosition = currentPosition;
-};
-
-Sketchpad.prototype._touchStart = function(event) {
-  event.preventDefault();
-  if (this._sketching) {
-    return;
-  }
-  this._lastPosition = this._cursorPosition(event.changedTouches[0]);
-  this._currentStroke.color = this.color;
-  this._currentStroke.size = this.penSize;
-  this._currentStroke.lines = [];
-  this._sketching = true;
-  this.canvas.addEventListener('touchmove', this._touchMove, false);
-};
-
-Sketchpad.prototype._touchEnd = function(event) {
-  event.preventDefault();
-  if (this._sketching) {
-    this.strokes.push($.extend(true, {}, this._currentStroke));
-    this._sketching = false;
-  }
-  this.canvas.removeEventListener('touchmove', this._touchMove);
-};
-
-Sketchpad.prototype._touchCancel = function(event) {
-  event.preventDefault();
-  if (this._sketching) {
-    this.strokes.push($.extend(true, {}, this._currentStroke));
-    this._sketching = false;
-  }
-  this.canvas.removeEventListener('touchmove', this._touchMove);
-};
-
-Sketchpad.prototype._touchLeave = function(event) {
-  event.preventDefault();
-  if (this._sketching) {
-    this.strokes.push($.extend(true, {}, this._currentStroke));
-    this._sketching = false;
-  }
-  this.canvas.removeEventListener('touchmove', this._touchMove);
-};
-
-Sketchpad.prototype._touchMove = function(event) {
-  event.preventDefault();
-  var currentPosition = this._cursorPosition(event.changedTouches[0]);
-
+Sketchpad.prototype._brushMove = function(event) {
+  var currentPosition = this._cursorPosition();
+  console.log("brushmove")
   this._draw(this._lastPosition, currentPosition, this.color, this.penSize);
   this._currentStroke.lines.push({
     start: $.extend(true, {}, this._lastPosition),
@@ -216,15 +165,9 @@ Sketchpad.prototype.reset = function() {
   }
 
   // Mouse
-  this.canvas.addEventListener('mousedown', this._mouseDown);
-  this.canvas.addEventListener('mouseout', this._mouseUp);
-  this.canvas.addEventListener('mouseup', this._mouseUp);
-
-  // Touch
-  this.canvas.addEventListener('touchstart', this._touchStart);
-  this.canvas.addEventListener('touchend', this._touchEnd);
-  this.canvas.addEventListener('touchcancel', this._touchCancel);
-  this.canvas.addEventListener('touchleave', this._touchLeave);
+  $(this.canvas).on("brush:down", this._brushDown);
+  $(this.canvas).on("brush:out", this._brushUp);
+  $(this.canvas).on("brush:up", this._brushUp);
 };
 
 Sketchpad.prototype.drawStroke = function(stroke) {
