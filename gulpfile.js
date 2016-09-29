@@ -54,4 +54,5 @@ gulp.task('watch', function() {
 });
 
 
-gulp.task('default', ['sass', 'watch', 'js', 'assets']);
+gulp.task('dev', ['sass', 'watch', 'js', 'assets']);
+gulp.task('prod', ['sass', 'js', 'assets']);
