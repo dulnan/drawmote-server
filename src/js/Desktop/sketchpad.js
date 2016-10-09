@@ -82,8 +82,8 @@ function Sketchpad(config) {
 
 Sketchpad.prototype._cursorPosition = function() {
   return {
-    x: cursorX,
-    y: cursorY
+    x: Drawmote.Desktop.Interface.cursorX,
+    y: Drawmote.Desktop.Interface.cursorY
   };
 };
 
@@ -116,7 +116,6 @@ Sketchpad.prototype._stroke = function(start, end, color, size, compositeOperati
 //
 
 Sketchpad.prototype._brushDown = function(event) {
-  console.log("brushdown")
   this._lastPosition = this._cursorPosition();
   this._currentStroke.color = this.color;
   this._currentStroke.size = this.penSize;
@@ -126,7 +125,6 @@ Sketchpad.prototype._brushDown = function(event) {
 };
 
 Sketchpad.prototype._brushUp = function(event) {
-  console.log("brushup")
   if (this._sketching) {
     this.strokes.push($.extend(true, {}, this._currentStroke));
     this._sketching = false;
@@ -136,7 +134,6 @@ Sketchpad.prototype._brushUp = function(event) {
 
 Sketchpad.prototype._brushMove = function(event) {
   var currentPosition = this._cursorPosition();
-  console.log("brushmove")
   this._draw(this._lastPosition, currentPosition, this.color, this.penSize);
   this._currentStroke.lines.push({
     start: $.extend(true, {}, this._lastPosition),

@@ -364,28 +364,70 @@ textarea {
   font: inherit;
   /* 2 */ }
 
+@font-face {
+  font-family: 'Karla';
+  src: url("../fonts/Karla/Karla-Regular.ttf?23ib9y") format("truetype");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Karla';
+  src: url("../fonts/Karla/Karla-Bold.ttf?23ib9y") format("truetype");
+  font-weight: bold;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Abel';
+  src: url("../fonts/Abel/Abel-Regular.ttf?23ib9y") format("truetype");
+  font-weight: bold;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Heebo';
+  src: url("../fonts/Heebo/Heebo-ExtraBold.ttf?23ib9y") format("truetype");
+  font-weight: 800;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Heebo';
+  src: url("../fonts/Heebo/Heebo-Thin.ttf?23ib9y") format("truetype");
+  font-weight: 100;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Heebo';
+  src: url("../fonts/Heebo/Heebo-Light.ttf?23ib9y") format("truetype");
+  font-weight: 200;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Heebo';
+  src: url("../fonts/Heebo/Heebo-Regular.ttf?23ib9y") format("truetype");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Heebo';
+  src: url("../fonts/Heebo/Heebo-Medium.ttf?23ib9y") format("truetype");
+  font-weight: 500;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Heebo';
+  src: url("../fonts/Heebo/Heebo-Bold.ttf?23ib9y") format("truetype");
+  font-weight: bold;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Heebo';
+  src: url("../fonts/Heebo/Heebo-Black.ttf?23ib9y") format("truetype");
+  font-weight: 900;
+  font-style: normal; }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "BlinkMacSystemFont", sans-serif;
+  font-family: "Heebo", -apple-system, BlinkMacSystemFont, "BlinkMacSystemFont", sans-serif;
   font-size: 16px;
   color: #121212; }
-
-.bg--greyExtraLight {
-  background: #faf8f5; }
-
-.bg--blue {
-  background: #c4e8f7; }
-
-.bg--green {
-  background: #b8ddbe; }
-
-.bg--yellow {
-  background: #fdbc4b; }
-
-.bg--red {
-  background: #fd794b; }
-
-.bg--black {
-  background: #383c47; }
 
 body {
   background: #faf8f5;
@@ -472,21 +514,12 @@ body {
   font-size: 1.2em; }
 
 .setup-code {
-  display: -webkit-box;
-  display: flex;
+  display: block;
   width: 350px;
-  margin: 3em auto 0;
-  -webkit-box-pack: justify;
-  justify-content: space-between; }
-
-.setup-code-no {
-  width: 51px;
-  height: 51px;
-  border: 1px solid white;
-  border-radius: 100%;
-  font-size: 35px;
-  font-weight: 200;
-  line-height: 47px; }
+  margin: 30px auto 0;
+  font-size: 72px;
+  text-align: center;
+  letter-spacing: 30px; }
 
 .setup-title {
   font-weight: 200;

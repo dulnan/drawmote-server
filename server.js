@@ -11,11 +11,11 @@ app.get('/', function(req, res){
     res.render('index.jade');
 });
 
-app.get('/mobile/:id', function(req, res){
-    res.render('mobile.jade', {id: req.params.id});
+app.get('/mobile', function(req, res){
+    res.render('mobile.jade');
 });
 
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 8000);
 
 var regUsers = {};
 
@@ -23,19 +23,30 @@ io.sockets.on('connection', function(socket) {
     var deskSocket;
     var mobileSocket;
 
-    socket.on('desktop-register', function(data) {
-        regUsers[data.id] = deskSocket = socket;
+    socket.on('desktop-getcode', function(data, callback) {
+        var chars = "123456789";
+        var ranLength = 4;
+        
+        var code = "";
+        
+        for(var i=0; i<ranLength; i++) {
+            var char = chars[Math.floor(Math.random() * chars.length)];
+            code += char;
+        }
+        regUsers[code] = deskSocket = socket;
+        callback(code);
     });
-
     
-    socket.on('mobile-register', function(data) {
+    socket.on('mobile-register', function(data, callback) {
         mobileSocket = socket;
 
         if(typeof(regUsers[data.id]) !== "undefined") {
             deskSocket = regUsers[data.id];
-            
             deskSocket.emit('mobile-on');
-            mobileSocket.emit('start');
+            
+            callback("valid");
+        } else {
+            callback("invalid");
         }
     });
 
@@ -51,9 +62,9 @@ io.sockets.on('connection', function(socket) {
         }
     });
 
-    socket.on('brush-state', function(brushState) {
+    socket.on('brush-mode', function(brushState) {
         if(typeof(deskSocket) !== "undefined" && deskSocket !== null) {
-            deskSocket.emit('brush-state', brushState);
+            deskSocket.emit('brush-mode', brushState);
         }
     });
 });

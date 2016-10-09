@@ -42,7 +42,7 @@ body {
     justify-content: center;
 }
 
-#brush-circle {
+#brush-preview {
     height: 200px;
     width: 200px;
     transform: scale(0.55);
@@ -108,7 +108,7 @@ body {
     border: 0;
 }
 
-.colors-list {
+#colors-list {
     display: flex;
     justify-content: space-between;
     margin: 0;
@@ -148,8 +148,9 @@ body {
     // -webkit-backdrop-filter: blur(10px);
     // background: rgba(255,255,255,0.5);
     text-align: center;
-    background: $text;
-    color: white;
+    background: $greyExtraLight;
+    background: linear-gradient($greyExtraLight, $greyLight);
+    color: $text;
 }
 
 .setup-wrapper {
@@ -164,32 +165,64 @@ body {
     margin: 0 0 0 16px;
 }
 
+
+@keyframes wrong-code {
+    0% {
+        transform: translateX(0%);
+    }
+    25% {
+        transform: translateX(20%);
+    }
+    50% {
+        transform: translateX(0%);
+    }
+    75% {
+        transform: translateX(-20%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.animation-wrong-code {
+    animation: 0.2s wrong-code infinite ease-in-out;
+    animation-iteration-count: 2;
+}
+
 .code-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    
 }
 
 .code-entered {
     display: flex;
     justify-content: space-between;
-    width: 30vw;
-    margin: 2em 0;
+    width: 70%;
+    margin: 2em auto;
 }
 
+
 .code-entered-num {
-    height: 3vw;
-    width: 3vw;
+    height: 50px;
+    width: 50px;
     border-radius: 100%;
-    background: $grey;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 52px;
+    // border: 2px solid white;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.code-entered-num--entered {
+    // background: $grey;
 }
 
 .code-numpad {
-    width: 86vw;
-    height: 96vw;
+    width: 90vw;
+    height: 50vh;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin: 0 auto;
 }
 
 .code-numpad-num {
@@ -198,22 +231,24 @@ body {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+    position: relative;
 }
 
 .code-numpad-num-text {
-    border: 1px solid $grey;
-    // background: $yellow;
-    width: 19vw;
-    height: 19vw;
-    font-size: 9vw;
+    // border: 2px solid white;
+    background: white;
+    box-shadow: 0px 0px 10px black;
+    width: 100px;
+    height: 100px;
+    font-size: 42px;
     font-weight: 100;
-    line-height: 19vw;
+    line-height: 94px;
     border-radius: 100%;
     transition: 0.3s;
 }
 
 .code-numpad-num.hover .code-numpad-num-text {
-    box-shadow: 0 0 30px 0px rgba(250, 248, 245, 0.24);
+    // box-shadow: 0 0 30px 0px rgba(250, 248, 245, 0.24);
     background: rgba(250, 248, 245, 0.14);
     transform: scale(0.9);
     transition: 0.1s;

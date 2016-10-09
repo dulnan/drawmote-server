@@ -1,0 +1,20 @@
+{
+    "folders":
+    [
+        {
+            "file_exclude_patterns":
+            [
+                "*.mp3",
+                "*.ogg",
+                "*.pdf",
+                "*.min.*"
+            ],
+            "folder_exclude_patterns":
+            [
+                ".git",
+                "static"
+            ],
+            "path": "/Users/dulnan/Development/drawmote/"
+        }
+    ]
+}
