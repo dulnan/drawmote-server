@@ -3,7 +3,16 @@
 @import "partials/_general";
 
 html {
-
+    font-size: 16px;
+    @media (min-width: $break-xs) {
+        font-size: 18px;
+    }
+    @media (min-width: $break-s) {
+        font-size: 20px;
+    }
+    @media (min-width: $break-m) {
+        font-size: 22px;
+    }
 }
 
 body {
@@ -149,8 +158,9 @@ body {
     // background: rgba(255,255,255,0.5);
     text-align: center;
     background: $greyExtraLight;
-    background: linear-gradient($greyExtraLight, $greyLight);
-    color: $text;
+    // background: linear-gradient($greyExtraLight, $greyLight);
+    background: linear-gradient(-40deg, $black, #53555d);
+    color: $white;
 }
 
 .setup-wrapper {
@@ -158,11 +168,14 @@ body {
 }
 
 .setup-title {
-    font-weight: 100;
-    font-size: 2em;
+    font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 16px;
-    margin: 0 0 0 16px;
+    font-size: 1.25rem;
+    letter-spacing: 1rem;
+    margin: 0 0 0 1rem;
+    @media (min-width: $break-s) {
+        font-size: 2rem;
+    }
 }
 
 
@@ -171,21 +184,31 @@ body {
         transform: translateX(0%);
     }
     25% {
-        transform: translateX(20%);
+        transform: translateX(12%);
     }
     50% {
         transform: translateX(0%);
     }
     75% {
-        transform: translateX(-20%);
+        transform: translateX(-12%);
     }
     100% {
         transform: translateX(0%);
     }
 }
 
+@keyframes wrong-code-num {
+    0% {
+        transform: none;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
 .animation-wrong-code {
-    animation: 0.2s wrong-code infinite ease-in-out;
+    animation: 0.2s wrong-code infinite cubic-bezier(.53,0.37,.47,1.42);
     animation-iteration-count: 2;
 }
 
@@ -196,29 +219,31 @@ body {
 .code-entered {
     display: flex;
     justify-content: space-between;
-    width: 70%;
-    margin: 2em auto;
+    width: 75vw;
+    max-width: 340px;
+    height: 3rem;
+    margin: 1rem auto;
+    border: 2px solid rgba($white, 0.05);
+    border-radius: 0.75rem;
 }
 
 
 .code-entered-num {
-    height: 50px;
-    width: 50px;
-    border-radius: 100%;
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 52px;
-    // border: 2px solid white;
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.code-entered-num--entered {
-    // background: $grey;
+    flex: 1;
+    font-size: 2rem;
+    font-weight: 200;
+    line-height: 2.9rem;
+    .animation-wrong-code & {
+        opacity: 0;
+        transition: 0.3s;
+        transition-delay: 0.2s;
+    }
 }
 
 .code-numpad {
     width: 90vw;
     height: 50vh;
+    max-width: 500px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -235,20 +260,18 @@ body {
 }
 
 .code-numpad-num-text {
-    // border: 2px solid white;
-    background: white;
-    box-shadow: 0px 0px 10px black;
-    width: 100px;
-    height: 100px;
-    font-size: 42px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+    background: rgba($white,0.05);
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
     font-weight: 100;
-    line-height: 94px;
+    line-height: 3.9rem;
     border-radius: 100%;
     transition: 0.3s;
 }
 
 .code-numpad-num.hover .code-numpad-num-text {
-    // box-shadow: 0 0 30px 0px rgba(250, 248, 245, 0.24);
     background: rgba(250, 248, 245, 0.14);
     transform: scale(0.9);
     transition: 0.1s;

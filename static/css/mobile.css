@@ -425,9 +425,19 @@ textarea {
   font-style: normal; }
 
 body {
-  font-family: "Heebo", -apple-system, BlinkMacSystemFont, "BlinkMacSystemFont", sans-serif;
-  font-size: 16px;
-  color: #121212; }
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, "BlinkMacSystemFont", sans-serif; }
+
+html {
+  font-size: 16px; }
+  @media (min-width: 375px) {
+    html {
+      font-size: 18px; } }
+  @media (min-width: 480px) {
+    html {
+      font-size: 20px; } }
+  @media (min-width: 768px) {
+    html {
+      font-size: 22px; } }
 
 body {
   height: 100vh;
@@ -562,34 +572,37 @@ body {
   z-index: 400;
   text-align: center;
   background: #faf8f5;
-  background: -webkit-linear-gradient(#faf8f5, #edeeec);
-  background: linear-gradient(#faf8f5, #edeeec);
-  color: #121212; }
+  background: -webkit-linear-gradient(130deg, #383c47, #53555d);
+  background: linear-gradient(-40deg, #383c47, #53555d);
+  color: #ececec; }
 
 .setup-wrapper {
   -webkit-box-flex: 1;
   flex: 1; }
 
 .setup-title {
-  font-weight: 100;
-  font-size: 2em;
+  font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 16px;
-  margin: 0 0 0 16px; }
+  font-size: 1.25rem;
+  letter-spacing: 1rem;
+  margin: 0 0 0 1rem; }
+  @media (min-width: 480px) {
+    .setup-title {
+      font-size: 2rem; } }
 
 @-webkit-keyframes wrong-code {
   0% {
     -webkit-transform: translateX(0%);
     transform: translateX(0%); }
   25% {
-    -webkit-transform: translateX(20%);
-    transform: translateX(20%); }
+    -webkit-transform: translateX(12%);
+    transform: translateX(12%); }
   50% {
     -webkit-transform: translateX(0%);
     transform: translateX(0%); }
   75% {
-    -webkit-transform: translateX(-20%);
-    transform: translateX(-20%); }
+    -webkit-transform: translateX(-12%);
+    transform: translateX(-12%); }
   100% {
     -webkit-transform: translateX(0%);
     transform: translateX(0%); } }
@@ -599,21 +612,39 @@ body {
     -webkit-transform: translateX(0%);
     transform: translateX(0%); }
   25% {
-    -webkit-transform: translateX(20%);
-    transform: translateX(20%); }
+    -webkit-transform: translateX(12%);
+    transform: translateX(12%); }
   50% {
     -webkit-transform: translateX(0%);
     transform: translateX(0%); }
   75% {
-    -webkit-transform: translateX(-20%);
-    transform: translateX(-20%); }
+    -webkit-transform: translateX(-12%);
+    transform: translateX(-12%); }
   100% {
     -webkit-transform: translateX(0%);
     transform: translateX(0%); } }
 
+@-webkit-keyframes wrong-code-num {
+  0% {
+    -webkit-transform: none;
+    transform: none; }
+  100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0; } }
+
+@keyframes wrong-code-num {
+  0% {
+    -webkit-transform: none;
+    transform: none; }
+  100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0; } }
+
 .animation-wrong-code {
-  -webkit-animation: 0.2s wrong-code infinite ease-in-out;
-  animation: 0.2s wrong-code infinite ease-in-out;
+  -webkit-animation: 0.2s wrong-code infinite cubic-bezier(0.53, 0.37, 0.47, 1.42);
+  animation: 0.2s wrong-code infinite cubic-bezier(0.53, 0.37, 0.47, 1.42);
   -webkit-animation-iteration-count: 2;
   animation-iteration-count: 2; }
 
@@ -622,21 +653,30 @@ body {
   display: flex;
   -webkit-box-pack: justify;
   justify-content: space-between;
-  width: 70%;
-  margin: 2em auto; }
+  width: 75vw;
+  max-width: 340px;
+  height: 3rem;
+  margin: 1rem auto;
+  border: 2px solid rgba(236, 236, 236, 0.05);
+  border-radius: 0.75rem; }
 
 .code-entered-num {
-  height: 50px;
-  width: 50px;
-  border-radius: 100%;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 52px;
-  background: rgba(255, 255, 255, 0.4); }
+  -webkit-box-flex: 1;
+  flex: 1;
+  font-size: 2rem;
+  font-weight: 200;
+  line-height: 2.9rem; }
+  .animation-wrong-code .code-entered-num {
+    opacity: 0;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+    -webkit-transition-delay: 0.2s;
+    transition-delay: 0.2s; }
 
 .code-numpad {
   width: 90vw;
   height: 50vh;
+  max-width: 500px;
   display: -webkit-box;
   display: flex;
   flex-wrap: wrap;
@@ -657,13 +697,13 @@ body {
   position: relative; }
 
 .code-numpad-num-text {
-  background: white;
-  box-shadow: 0px 0px 10px black;
-  width: 100px;
-  height: 100px;
-  font-size: 42px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  background: rgba(236, 236, 236, 0.05);
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
   font-weight: 100;
-  line-height: 94px;
+  line-height: 3.9rem;
   border-radius: 100%;
   -webkit-transition: 0.3s;
   transition: 0.3s; }
