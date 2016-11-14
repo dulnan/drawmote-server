@@ -1,3 +1,5 @@
+'use strict';
+
 var Drawmote = Drawmote || {};
 
 Drawmote.Mobile.Data = {};

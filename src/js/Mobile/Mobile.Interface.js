@@ -1,8 +1,9 @@
+'use strict';
+
 var Drawmote = Drawmote || {};
 
 var enteredNumber = "";
 var enteredNumberCount = 0;
-
 
 Drawmote.Mobile.Interface = {};
 
@@ -10,7 +11,7 @@ Drawmote.Mobile.Interface.init = function() {
     // Bind Event Listener
     $('body').on('scroll', function(e) {
         e.preventDefault();
-    })
+    });
 
     // Get Elements
     this.el = {};
@@ -42,27 +43,22 @@ Drawmote.Mobile.Interface.init = function() {
         }
     }
 
-
     // Setup/Pairing Part
     $(".code-numpad-num").on("touchstart", function() {
         $(this).addClass("hover");
         enteredNumberCount++;
         enteredNumber += $(this).data("num");
 
-        $(".code-entered-num:eq("+(enteredNumberCount - 1)+")").addClass("code-entered-num--entered");
-        $(".code-entered-num:eq("+(enteredNumberCount - 1)+")").html($(this).data("num"));
+        $(".code-entered-num:eq("+(enteredNumberCount - 1)+")").addClass("code-entered-num--entered")
+            .html($(this).data("num"));
 
-        if (enteredNumberCount == 4) {
+        if (enteredNumberCount === 4) {
             Drawmote.Mobile.validateCode(enteredNumber);
         }
-    });
-
-    $(".code-numpad-num").on("touchend", function() {
+    }).on("touchend", function() {
         $(this).removeClass("hover");
     });
-}
-
-
+};
 
 Drawmote.Mobile.Interface.codeInvalid = function() {
     enteredNumber = "";
@@ -70,12 +66,10 @@ Drawmote.Mobile.Interface.codeInvalid = function() {
     $(".code-entered").addClass("animation-wrong-code");
     setTimeout(function() {
         $(".code-entered").removeClass("animation-wrong-code");
-        $(".code-entered-num").removeClass("code-entered-num--entered");
-        $(".code-entered-num").html("");
-    },500);
+        $(".code-entered-num").removeClass("code-entered-num--entered")
+            .html("");
+    }, 500);
 };
-
-
 
 Drawmote.Mobile.Interface.prepareDrawView = function () {
     $(".container-setup").addClass("setup-disappear");
@@ -96,9 +90,7 @@ Drawmote.Mobile.Interface.prepareDrawView = function () {
 
     $("#brush-container").on("touchstart", function() {
         Drawmote.Mobile.setBrushMode("draw");
-    });
-
-    $("#brush-container").on("touchend", function() {
+    }).on("touchend", function() {
         Drawmote.Mobile.setBrushMode("move");
     });
 
@@ -108,5 +100,4 @@ Drawmote.Mobile.Interface.prepareDrawView = function () {
         var scale = Drawmote.Helpers.scaleBetween(this.value, 0.1,1,10,200);
         $(Drawmote.Mobile.Interface.el.brushPreview).css("transform", "scale("+scale+")");
     });
-
 };

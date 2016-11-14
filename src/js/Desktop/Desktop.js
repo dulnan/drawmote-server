@@ -1,3 +1,5 @@
+'use strict';
+
 var Drawmote = Drawmote || {};
 
 Drawmote.Desktop = {};
@@ -19,7 +21,7 @@ Drawmote.Desktop.init = function() {
 
 };
 
-Drawmote.Desktop.handleMobileConnected = function(e, data) {
+Drawmote.Desktop.handleMobileConnected = function() {
     Drawmote.Desktop.Interface.prepareDrawView();
 };
 

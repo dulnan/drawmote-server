@@ -1,7 +1,8 @@
+'use strict';
+
 var Drawmote = Drawmote || {};
 
 Drawmote.Mobile = {};
-
 
 /**
  * Create a new brush and
@@ -13,8 +14,7 @@ Drawmote.Mobile.init = function() {
     Drawmote.Mobile.Socket.init();
     Drawmote.Mobile.Data.init();
     Drawmote.Mobile.Interface.init();
-}
-
+};
 
 /**
  * Sends the entered code to the server
@@ -32,7 +32,6 @@ Drawmote.Mobile.validateCode = function (code) {
     });
 };
 
-
 /**
  * starts the sending the gyro data to the desktop
  */
@@ -46,31 +45,21 @@ Drawmote.Mobile.startDataStream = function() {
     }, 30);
 };
 
-
 Drawmote.Mobile.setBrushColor = function(color) {
     this.brush.color = color;
     Drawmote.Mobile.Socket.changeBrush(this.brush);
 };
-
-
 
 Drawmote.Mobile.setBrushSize = function(size) {
     this.brush.size = size;
     Drawmote.Mobile.Socket.changeBrush(this.brush);
 };
 
-
-
 Drawmote.Mobile.setBrushMode = function(mode) {
     this.brush.mode = mode;
     Drawmote.Mobile.Socket.changeBrushMode(mode);
 };
 
-
-
 $(document).ready(function() {
     Drawmote.Mobile.init();
 });
-
-
-
