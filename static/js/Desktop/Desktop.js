@@ -8,6 +8,7 @@ Drawmote.Desktop.init = function() {
     this.brush = new Drawmote.Brush();
 
     Drawmote.Desktop.Socket.init();
+    Drawmote.Desktop.Canvas.init();
     Drawmote.Desktop.Interface.init();
 
     Drawmote.Desktop.Socket.getCode(function(response) {

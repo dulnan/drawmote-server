@@ -8,30 +8,42 @@ html(lang='en')
         script(type="text/javascript", src="/js/Vector/Plane.js")
         script(type="text/javascript", src="/js/Vector/Line.js")
         script(type="text/javascript", src="/js/Helpers.js")
-        script(type="text/javascript", src="/js/Desktop/sketchpad.js")
         script(type="text/javascript", src="/js/Desktop/Desktop.js")
         script(type="text/javascript", src="/js/Desktop/Desktop.Socket.js")
         script(type="text/javascript", src="/js/Desktop/Desktop.Interface.js")
         script(type="text/javascript", src="/js/Desktop/Desktop.Data.js")
+        script(type="text/javascript", src="/js/Desktop/sketchpad.js")
         script(type="text/javascript", src="/socket.io/socket.io.js")
-body(class="desktop")
-    div(class="canvas-container")
+body(class="desktop toolbar-is-active")
+    div(class="canvas-container",id="canvas-container")
         canvas(id="canvas")
         div(id="brush-anchor")
             div(id="brush-circle",class="bg--blue")
-    div(id="data")
-        div(class="data-item data-item--gamma")
-            div(class="data-value") 0.02353045
-            div(class="data-label") Gamma
-        div(class="data-item data-item--beta")
-            div(class="data-value") 45.8798566
-            div(class="data-label") Beta
-        div(class="data-item data-item--alpha")
-            div(class="data-value") 1.89989994
-            div(class="data-label") Alpha
-        div(class="data-item data-item--vaccel")
-            div(class="data-value") 100
-            div(class="data-label") Vaccel
+            div(id="bounds-circle")
+        div(id="cursor-anchor")
+            div(id="cursor-circle")
+
+    div(id="toolbar")
+        div(class="toolbar__bar toolbar__bar--color",id="toolbar-colors")
+        div(class="toolbar__bar toolbar__bar--brush")
+            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="148" viewBox="0 0 800 148"><path id="brush-stroke-preview" d="M110.5,87.5s74.5-40,159-40,170.5,53,253,53,168-43,168-43"/></svg>
+
+        div(class="toolbar__bar toolbar__bar--tools")
+            div(class="toolbar__item toolbar__item--reset",id="toolbar-item--clear")
+                img(src="/images/delete.svg")
+    //- div(id="data")
+    //-     div(class="data-item data-item--gamma")
+    //-         div(class="data-value") 0.02353045
+    //-         div(class="data-label") Gamma
+    //-     div(class="data-item data-item--beta")
+    //-         div(class="data-value") 45.8798566
+    //-         div(class="data-label") Beta
+    //-     div(class="data-item data-item--alpha")
+    //-         div(class="data-value") 1.89989994
+    //-         div(class="data-label") Alpha
+    //-     div(class="data-item data-item--vaccel")
+    //-         div(class="data-value") 100
+    //-         div(class="data-label") Vaccel
     div(class="setup-container")
         div(class="setup-wrapper")
             h1(class="setup-title") drawmote

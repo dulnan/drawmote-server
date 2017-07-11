@@ -7,13 +7,66 @@ Drawmote.Desktop.Interface = {};
 Drawmote.Desktop.Interface.init = function() {
     this.el = {};
     this.el.canvas = document.getElementById("canvas");
+    this.el.toolbar = document.getElementById("toolbar");
+
+    this.el.toolbarItemClear = document.getElementById("toolbar-item--clear");
+    this.el.toolbarBrushPreview = document.getElementById("brush-stroke-preview");
+
+    this.el.toolbarItemClear.addEventListener('click', function() {
+        Drawmote.Desktop.Canvas.clearCanvas();
+    });
+
+    this.el.toolbarColors = document.getElementById("toolbar-colors");
+
+    for (var color in Drawmote.Colors) {
+        if (Drawmote.Colors.hasOwnProperty(color)) {
+            
+            var colorItem = document.createElement("div");
+            colorItem.className = "toolbar__item toolbar__item--color";
+            colorItem.name = "color";
+            colorItem.dataset.colorname = Drawmote.Colors[color].name;
+            colorItem.style.background = Drawmote.Colors[color].hex;
+
+            if(Drawmote.Colors[color].default) {
+                colorItem.classList.add('active');
+                Drawmote.Desktop.Interface.setBrushColor(Drawmote.Colors[color].name);
+            }
+
+            colorItem.addEventListener('click', function() {
+                Drawmote.Desktop.Interface.setBrushColor(this.dataset.colorname);
+            });
+
+            this.el.toolbarColors.appendChild(colorItem);
+        }
+    }
+
+    this.toolbarItems = [];
+
+    var toolbarElements = document.querySelectorAll('.toolbar__item');
+
+    for (var i = 0; i < toolbarElements.length; ++i) {
+        var rect = toolbarElements[i].getBoundingClientRect();
+        this.toolbarItems.push({
+            element: toolbarElements[i],
+            position: {
+                x: rect.left + (rect.width / 2),
+                y: rect.top + (rect.height / 2)
+            }
+        })
+    }
+
+    console.log(this.toolbarItems)
 
     this.cursorX = 0;
     this.cursorY = 0;
     this.cursorXprev = 0;
     this.cursorYprev = 0;
+    this.brushX = 0;
+    this.brushY = 0;
     this.brushState = "move";
     this.brushStateChanged = false;
+
+    $('body').addClass('app-is-ready');
 };
 
 Drawmote.Desktop.Interface.prepareDrawView = function() {
@@ -21,12 +74,6 @@ Drawmote.Desktop.Interface.prepareDrawView = function() {
 
     this.canvasWidth = this.windowWidth;
     this.canvasHeight = this.windowHeight;
-
-    this.sketchpad = new Sketchpad({
-        element: '#canvas',
-        width: this.canvasWidth,
-        height: this.canvasHeight
-    });
 
     // Needed to position the x and y axis so that the phone can later be rotatet around those
     var phoneZPos = 2 * this.windowWidth;
@@ -56,6 +103,10 @@ Drawmote.Desktop.Interface.prepareDrawView = function() {
 
     $(".setup-container").addClass("setup-disappear");
 
+    window.setTimeout(function() {
+        $(".setup-container").addClass("setup-hide");
+    }, 400);
+
     Drawmote.Desktop.Interface.runFrame();
 };
 
@@ -65,18 +116,23 @@ Drawmote.Desktop.Interface.setWindowSize = function() {
 };
 
 Drawmote.Desktop.Interface.setBrush = function(brush) {
-    $("#brush-circle")[0].style.background = brush.color.hex;
 
-    var scale = Drawmote.Helpers.scaleBetween(brush.size, 0.1,1,10,200);
-    $("#brush-circle").css("transform", "scale("+scale+")");
+    // var scale = Drawmote.Helpers.scaleBetween(brush.size, 0.1,1,10,200);
+    // $("#brush-circle").css("transform", "scale("+scale+")");
 
-    this.sketchpad.color = brush.color.hex;
-    this.sketchpad.penSize = brush.size;
+    // this.sketchpad.color = brush.color.hex;
+    // this.sketchpad.penSize = brush.size;
 };
 
 Drawmote.Desktop.Interface.setBrushMode = function() {
     this.brushState = brush.mode;
     this.brushStateChanged = true;
+};
+
+Drawmote.Desktop.Interface.setBrushColor = function(color) {
+    $("#brush-circle")[0].style.background = Drawmote.Colors[color].hex;
+    Drawmote.Desktop.Canvas.setColor(Drawmote.Colors[color].hex);
+    this.el.toolbarBrushPreview.style.stroke = Drawmote.Colors[color].hex;
 };
 
 /**
@@ -100,37 +156,80 @@ Drawmote.Desktop.Interface.runFrame = function() {
         .rotateAroundLine(this.xAxis, 180 - gyroscope.beta);
     var interSectionVector = this.screenPlane.getIntersectionWith(phoneLinePrime);
 
-    var translateX = interSectionVector.x; //(Math.abs(interSectionVector.x)) * this.windowWidth;
-    var translateY = interSectionVector.y; //(1 - Math.abs(-interSectionVector.y)) * this.windowHeight;
+    var translateX = interSectionVector.x / 2; //(Math.abs(interSectionVector.x)) * this.windowWidth;
+    var translateY = interSectionVector.y / 2; //(1 - Math.abs(-interSectionVector.y)) * this.windowHeight;
 
-    if (Math.abs(translateX - this.cursorXprev) > 2) {
-        this.cursorX = translateX;
-        this.cursorXprev = this.cursorX;
+    this.cursorX = Math.round(translateX);
+    this.cursorY = Math.round(translateY);
+
+    var velocity = 15 - (Math.abs(this.cursorX - this.cursorXprev) + Math.abs(this.cursorY - this.cursorYprev)) / 5;
+    velocity = Math.max(velocity, 3);
+
+    if (this.brushState !== "draw") {
+        this.brushX = Math.round(this.cursorX);
+        this.brushY = Math.round(this.cursorY);
+    }
+    
+
+    if (this.brushState === "secondary") {
+        $('body').addClass('toolbar-is-active');
+
+        for (var i = 0; i < this.toolbarItems.length; ++i) {
+            var itemX = this.toolbarItems[i].position.x;
+            var itemY = this.toolbarItems[i].position.y;
+            if (Drawmote.Helpers.pointOutsideCircle(this.cursorX, this.cursorY, itemX, itemY, 35)) {
+                this.toolbarItems[i].element.classList.remove('hover');
+            } else {
+                this.toolbarItems[i].element.classList.add('hover');
+            }
+        }
+
+    } else {
+        $('body').removeClass('toolbar-is-active');
+        for (var i = 0; i < this.toolbarItems.length; ++i) {
+            if (this.toolbarItems[i].element.classList.contains('hover')) {
+                this.toolbarItems[i].element.click();
+                this.toolbarItems[i].element.classList.remove('hover');
+            }
+        }
     }
 
-    if (Math.abs(translateY - this.cursorYprev) > 2) {
-        this.cursorY = translateY;
-        this.cursorYprev = this.cursorY;
+    if (Drawmote.Helpers.pointOutsideCircle(this.cursorX, this.cursorY, this.brushX, this.brushY, 40)) {
+        this.brushX = Math.round(this.brushX + ((this.cursorX - this.brushX) / velocity));
+        this.brushY = Math.round(this.brushY + ((this.cursorY - this.brushY) / velocity));
     }
 
-    $("#brush-anchor").css("transform", "translate3d("+this.cursorX+"px,"+this.cursorY+"px,0)");
+
+    $("#brush-anchor").css("transform", "translate3d("+this.brushX+"px,"+this.brushY+"px,0)");
+    $("#cursor-anchor").css("transform", "translate3d("+this.cursorX+"px,"+this.cursorY+"px,0)");
 
     if (this.brushState === "draw") {
         if (this.brushStateChanged === true) {
             $(this.el.canvas).trigger("brush:down");
+
+            Drawmote.Desktop.Canvas.pointDown(this.brushX, this.brushY);
+
             this.brushStateChanged = false;
         } else {
             $(this.el.canvas).trigger("brush:move");
+
+            Drawmote.Desktop.Canvas.pointMove(this.brushX, this.brushY);
         }
     } else {
         if (this.brushStateChanged === true) {
             $(this.el.canvas).trigger("brush:up");
+            
+            Drawmote.Desktop.Canvas.pointUp();
+
             this.brushStateChanged = false;
         }
     }
 
+    this.cursorYprev = this.cursorY;
+    this.cursorXprev = this.cursorX;
+
     window.requestAnimationFrame(this.runFrame.bind(this));
 
-    $(".data-item--alpha .data-value").html(gyroscope.alpha.toFixed(2));
-    $(".data-item--beta .data-value").html(gyroscope.beta.toFixed(2));
+    // $(".data-item--alpha .data-value").html(gyroscope.alpha.toFixed(2));
+    // $(".data-item--beta .data-value").html(gyroscope.beta.toFixed(2));
 };

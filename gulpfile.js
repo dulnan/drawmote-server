@@ -47,12 +47,18 @@ gulp.task('fonts', function() {
 })
 
 
+gulp.task('images', function() {
+    return gulp.src(['src/images/**/*'])
+        .pipe(gulp.dest('static/images'));
+})
+
 gulp.task('watch', function() {
     gulp.watch('src/scss/**/*.scss', ['sass']);
     gulp.watch('src/js/**/*.js', ['js']);
     gulp.watch('src/fonts/**/*', ['fonts']);
+    gulp.watch('src/images/**/*', ['images']);
 });
 
 
-gulp.task('dev', ['sass', 'watch', 'js', 'fonts']);
+gulp.task('dev', ['sass', 'watch', 'js', 'fonts', 'images']);
 gulp.task('prod', ['sass', 'js', 'fonts']);

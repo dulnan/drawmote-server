@@ -33,6 +33,7 @@ io.sockets.on('connection', function(socket) {
             var char = chars[Math.floor(Math.random() * chars.length)];
             code += char;
         }
+        code = "1234";
         regUsers[code] = deskSocket = socket;
         callback(code);
     });

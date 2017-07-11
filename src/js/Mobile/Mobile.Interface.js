@@ -13,35 +13,14 @@ Drawmote.Mobile.Interface.init = function() {
         e.preventDefault();
     });
 
+    $(document).ready(function() {
+        Drawmote.Mobile.validateCode('1234');
+    });
+
     // Get Elements
     this.el = {};
     this.el.brushPreview = document.getElementById("brush-preview");
     this.el.colorsList = document.getElementById("colors-list");
-
-
-    // Create radio buttons for every color in Drawmote.Colors
-    for (var color in Drawmote.Colors) {
-        if (Drawmote.Colors.hasOwnProperty(color)) {
-            var item = document.createElement("li");
-            item.className = "color-item";
-            
-            var input = document.createElement("input");
-            input.className = "color-input";
-            input.type = "radio";
-            input.name = "color";
-            input.value = Drawmote.Colors[color].name;
-            input.style.background = Drawmote.Colors[color].hex;
-
-            if(Drawmote.Colors[color].default) {
-                input.checked = true;
-                this.el.brushPreview.style.background = Drawmote.Colors[color].hex;
-            }
-
-            item.appendChild(input);
-
-            this.el.colorsList.appendChild(item);
-        }
-    }
 
     // Setup/Pairing Part
     $(".code-numpad-num").on("touchstart", function() {
@@ -83,21 +62,24 @@ Drawmote.Mobile.Interface.prepareDrawView = function () {
     }, 2000);
 
 
-    $('.color-input').change(function() {
-        Drawmote.Mobile.setBrushColor(Drawmote.Colors[this.value]);
-        Drawmote.Mobile.Interface.el.brushPreview.style.background = Drawmote.Colors[this.value].hex;
-    });
-
-    $("#brush-container").on("touchstart", function() {
+    $("#button-primary").on("touchstart", function(e) {
+        e.preventDefault();
         Drawmote.Mobile.setBrushMode("draw");
     }).on("touchend", function() {
         Drawmote.Mobile.setBrushMode("move");
     });
 
-    $('.size-input').on("touchmove", function() {
-        Drawmote.Mobile.setBrushSize(this.value);
-
-        var scale = Drawmote.Helpers.scaleBetween(this.value, 0.1,1,10,200);
-        $(Drawmote.Mobile.Interface.el.brushPreview).css("transform", "scale("+scale+")");
+    $("#button-secondary").on("touchstart", function(e) {
+        e.preventDefault();
+        Drawmote.Mobile.setBrushMode("secondary");
+    }).on("touchend", function() {
+        Drawmote.Mobile.setBrushMode("move");
     });
+
+    // $('.size-input').on("touchmove", function() {
+    //     Drawmote.Mobile.setBrushSize(this.value);
+
+    //     // var scale = Drawmote.Helpers.scaleBetween(this.value, 0.1,1,10,200);
+    //     // $(Drawmote.Mobile.Interface.el.brushPreview).css("transform", "scale("+scale+")");
+    // });
 };
