@@ -14,23 +14,25 @@ html(lang='en')
         script(type="text/javascript", src="/js/Desktop/Desktop.Data.js")
         script(type="text/javascript", src="/js/Desktop/sketchpad.js")
         script(type="text/javascript", src="/socket.io/socket.io.js")
-body(class="desktop toolbar-is-active")
+body(class="desktop toolbar-is-actifve")
     div(class="canvas-container",id="canvas-container")
         canvas(id="canvas")
         div(id="brush-anchor")
-            div(id="brush-circle",class="bg--blue")
+            //- div(id="brush-circle",class="bg--blue")
+            <svg id="brush-svg" height="100" width="100"><circle id="brush-circle" cx="50" cy="50" r="5" fill="red" /></svg>
             div(id="bounds-circle")
         div(id="cursor-anchor")
             div(id="cursor-circle")
 
     div(id="toolbar")
-        div(class="toolbar__bar toolbar__bar--color",id="toolbar-colors")
-        div(class="toolbar__bar toolbar__bar--brush")
-            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="148" viewBox="0 0 800 148"><path id="brush-stroke-preview" d="M110.5,87.5s74.5-40,159-40,170.5,53,253,53,168-43,168-43"/></svg>
+        div(class="toolbar__content")
+            div(class="toolbar__bar toolbar__bar--color",id="toolbar-colors")
+            div(class="toolbar__bar toolbar__bar--brush")
+                <svg xmlns="http://www.w3.org/2000/svg" width="800" height="148" viewBox="0 0 800 148"><path id="brush-stroke-preview" d="M110.5,87.5s74.5-40,159-40,170.5,53,253,53,168-43,168-43"/></svg>
 
-        div(class="toolbar__bar toolbar__bar--tools")
-            div(class="toolbar__item toolbar__item--reset",id="toolbar-item--clear")
-                img(src="/images/delete.svg")
+            div(class="toolbar__bar toolbar__bar--tools")
+                div(class="toolbar__item toolbar__item--reset",id="toolbar-item--clear")
+                    img(src="/images/delete.svg")
     //- div(id="data")
     //-     div(class="data-item data-item--gamma")
     //-         div(class="data-value") 0.02353045

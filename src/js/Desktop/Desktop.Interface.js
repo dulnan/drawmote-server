@@ -46,16 +46,16 @@ Drawmote.Desktop.Interface.init = function() {
 
     for (var i = 0; i < toolbarElements.length; ++i) {
         var rect = toolbarElements[i].getBoundingClientRect();
+        var radius = rect.width / 2;
         this.toolbarItems.push({
             element: toolbarElements[i],
+            radius: radius,
             position: {
-                x: rect.left + (rect.width / 2),
-                y: rect.top + (rect.height / 2)
+                x: rect.left + (radius),
+                y: rect.top + (radius)
             }
         })
     }
-
-    console.log(this.toolbarItems)
 
     this.cursorX = 0;
     this.cursorY = 0;
@@ -65,6 +65,9 @@ Drawmote.Desktop.Interface.init = function() {
     this.brushY = 0;
     this.brushState = "move";
     this.brushStateChanged = false;
+
+    this.toolbarVisibleByPull = false;
+    this.cursorInCanvas = true;
 
     $('body').addClass('app-is-ready');
 };
@@ -117,6 +120,12 @@ Drawmote.Desktop.Interface.setWindowSize = function() {
 
 Drawmote.Desktop.Interface.setBrush = function(brush) {
 
+    $("#brush-circle")[0].setAttribute("r", brush.size / 2);
+    Drawmote.Desktop.Canvas.setSize(brush.size);
+
+    this.el.toolbarBrushPreview.style.strokeWidth = brush.size;
+
+
     // var scale = Drawmote.Helpers.scaleBetween(brush.size, 0.1,1,10,200);
     // $("#brush-circle").css("transform", "scale("+scale+")");
 
@@ -130,7 +139,7 @@ Drawmote.Desktop.Interface.setBrushMode = function() {
 };
 
 Drawmote.Desktop.Interface.setBrushColor = function(color) {
-    $("#brush-circle")[0].style.background = Drawmote.Colors[color].hex;
+    $("#brush-circle")[0].style.fill = Drawmote.Colors[color].hex;
     Drawmote.Desktop.Canvas.setColor(Drawmote.Colors[color].hex);
     this.el.toolbarBrushPreview.style.stroke = Drawmote.Colors[color].hex;
 };
@@ -165,22 +174,43 @@ Drawmote.Desktop.Interface.runFrame = function() {
     var velocity = 15 - (Math.abs(this.cursorX - this.cursorXprev) + Math.abs(this.cursorY - this.cursorYprev)) / 5;
     velocity = Math.max(velocity, 3);
 
+    console.log(velocity)
+
     if (this.brushState !== "draw") {
         this.brushX = Math.round(this.cursorX);
         this.brushY = Math.round(this.cursorY);
     }
+
+
+    if (this.cursorY <= (-1 * 0.3 * this.windowHeight) && this.cursorInCanvas) {
+        this.cursorInCanvas = false;
+
+        if (this.toolbarVisibleByPull == false) {
+            this.toolbarVisibleByPull = true;
+        } else {
+            this.toolbarVisibleByPull = false;
+        }
+    } else {
+        if (this.cursorY >= 40) {
+            this.cursorInCanvas = true;
+        }
+    }
     
 
-    if (this.brushState === "secondary") {
+    if (this.brushState === "secondary" || this.toolbarVisibleByPull == true) {
         $('body').addClass('toolbar-is-active');
 
         for (var i = 0; i < this.toolbarItems.length; ++i) {
             var itemX = this.toolbarItems[i].position.x;
             var itemY = this.toolbarItems[i].position.y;
-            if (Drawmote.Helpers.pointOutsideCircle(this.cursorX, this.cursorY, itemX, itemY, 35)) {
+            var itemRadius = this.toolbarItems[i].radius;
+            if (Drawmote.Helpers.pointOutsideCircle(this.cursorX, this.cursorY, itemX, itemY, itemRadius)) {
                 this.toolbarItems[i].element.classList.remove('hover');
             } else {
                 this.toolbarItems[i].element.classList.add('hover');
+                if (this.brushState === "draw") {
+                    this.toolbarItems[i].element.click();
+                }
             }
         }
 
@@ -203,7 +233,7 @@ Drawmote.Desktop.Interface.runFrame = function() {
     $("#brush-anchor").css("transform", "translate3d("+this.brushX+"px,"+this.brushY+"px,0)");
     $("#cursor-anchor").css("transform", "translate3d("+this.cursorX+"px,"+this.cursorY+"px,0)");
 
-    if (this.brushState === "draw") {
+    if (this.brushState === "draw" && this.toolbarVisibleByPull == false) {
         if (this.brushStateChanged === true) {
             $(this.el.canvas).trigger("brush:down");
 

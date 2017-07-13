@@ -433,7 +433,8 @@ body {
 body {
   background: #faf8f5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; }
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden; }
   body.app-is-ready {
     -webkit-perspective: 800px;
     perspective: 800px; }
@@ -459,8 +460,8 @@ body {
   .toolbar-is-active #canvas {
     -webkit-filter: blur(10px);
     filter: blur(10px);
-    -webkit-transform: translateZ(-5rem);
-    transform: translateZ(-5rem); }
+    -webkit-transform: translate3d(0, 0rem, 0rem);
+    transform: translate3d(0, 0rem, 0rem); }
 
 #tmp_canvas {
   z-index: 200; }
@@ -473,15 +474,13 @@ body {
   left: 0;
   z-index: 1000; }
 
-#brush-circle {
-  width: 20px;
-  height: 20px;
-  border-radius: 100%;
+#brush-svg {
+  width: 100px;
+  height: 100px;
   position: absolute;
-  top: -10px;
-  left: -10px;
-  transition: 0.4s cubic-bezier(0, 0.94, 1, 1); }
-  .toolbar-is-active #brush-circle {
+  top: -50px;
+  left: -50px; }
+  .toolbar-is-active #brush-svg {
     -webkit-transform: scale(0.5);
     transform: scale(0.5);
     opacity: 0; }
@@ -638,11 +637,26 @@ body {
   -webkit-box-pack: center;
   justify-content: center;
   z-index: 1100;
-  -webkit-transform: translateZ(10rem);
-  transform: translateZ(10rem);
   opacity: 0;
   transition: 0.3s cubic-bezier(0.56, 0.01, 0.84, 0.6); }
   .toolbar-is-active #toolbar {
+    opacity: 1; }
+
+.toolbar__content {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  transition: 0.3s cubic-bezier(0.56, 0.01, 0.84, 0.6); }
+  .toolbar__content.app-is-ready {
+    -webkit-transform: translate3d(0, 5rem, 0rem);
+    transform: translate3d(0, 5rem, 0rem); }
+  .toolbar-is-active .toolbar__content {
     -webkit-transform: none;
     transform: none;
     opacity: 1; }
@@ -653,13 +667,13 @@ body {
   position: relative; }
 
 .toolbar__item {
-  width: 70px;
-  height: 70px;
+  width: 9vw;
+  height: 9vw;
   transition: 0.3s cubic-bezier(0.53, -0.37, 0.47, 1.42);
   box-shadow: 0 0 2px 1px rgba(56, 60, 71, 0.2);
   border: 5px solid white;
   border-radius: 100%;
-  margin-right: 2rem;
+  margin-right: 2vw;
   background: white;
   padding: 0.5rem; }
   .toolbar__item:last-child {

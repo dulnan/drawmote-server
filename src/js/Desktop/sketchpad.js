@@ -51,9 +51,18 @@ Drawmote.Desktop.Canvas.setColor = function(hex) {
   this.tmp_ctx.fillStyle = hex;
 }
 
+Drawmote.Desktop.Canvas.setSize = function(size) {
+  this.tmp_ctx.lineWidth = size;
+}
+
 Drawmote.Desktop.Canvas.clearCanvas = function() {
   this.ctx.clearRect(0, 0, this.tmp_canvas.width, this.tmp_canvas.height);
 }
+
+Drawmote.Desktop.Canvas.clearTmpCanvas = function() {
+  this.tmp_ctx.clearRect(0, 0, this.tmp_canvas.width, this.tmp_canvas.height);
+}
+
 
 Drawmote.Desktop.Canvas.pointMove = function(x, y) {
   if (this.moveEnabled) {

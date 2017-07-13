@@ -4,6 +4,10 @@ var Drawmote = Drawmote || {};
 
 var enteredNumber = "";
 var enteredNumberCount = 0;
+var touchStartY = 0;
+
+var brushSize = 15;
+var newBrushSize = 15;
 
 Drawmote.Mobile.Interface = {};
 
@@ -64,14 +68,26 @@ Drawmote.Mobile.Interface.prepareDrawView = function () {
 
     $("#button-primary").on("touchstart", function(e) {
         e.preventDefault();
+        this.touchStartY = e.originalEvent.changedTouches[0].clientY;
         Drawmote.Mobile.setBrushMode("draw");
+    }).on("touchmove", function(e) {
+        newBrushSize = brushSize + Math.round((this.touchStartY - e.originalEvent.changedTouches[0].clientY) / 10);
+        newBrushSize = Math.min(100, Math.max(2, newBrushSize));
+        console.log(newBrushSize)
+
+        Drawmote.Mobile.setBrushSize(newBrushSize);
     }).on("touchend", function() {
+        brushSize = newBrushSize;
         Drawmote.Mobile.setBrushMode("move");
     });
 
     $("#button-secondary").on("touchstart", function(e) {
         e.preventDefault();
+        console.log(e.originalEvent.changedTouches[0].clientY)
+        secondaryTouchStartY = e.originalEvent.changedTouches[0].clientY;
         Drawmote.Mobile.setBrushMode("secondary");
+    }).on("touchmove", function(e) {
+
     }).on("touchend", function() {
         Drawmote.Mobile.setBrushMode("move");
     });

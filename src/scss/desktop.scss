@@ -11,6 +11,7 @@ body {
     background: $greyExtraLight;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
     &.app-is-ready {
         perspective: 800px;
     }
@@ -37,7 +38,7 @@ body {
     transition: 0.3s cubic-bezier(0.56, 0.01, 0.84, 0.6);
     .toolbar-is-active & {
         filter: blur(10px);
-        transform: translateZ(-5rem);
+        transform: translate3d(0,0rem,-0rem);
     }
 }
 
@@ -56,14 +57,12 @@ body {
     // transition: 0.09s transform cubic-bezier(0, 0.94, 1, 1);
 }
 
-#brush-circle {
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
+#brush-svg {
+    width: 100px;
+    height: 100px;
     position: absolute;
-    top: -10px;
-    left: -10px;
-    transition: 0.4s cubic-bezier(0, 0.94, 1, 1);
+    top: -50px;
+    left: -50px;
     .toolbar-is-active & {
         transform: scale(0.5);
         opacity: 0;
@@ -233,9 +232,23 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1100;
-    transform: translateZ(10rem);
     opacity: 0;
     transition: 0.3s cubic-bezier(0.56, 0.01, 0.84, 0.6);
+    .toolbar-is-active & {
+        opacity: 1;
+    }
+}
+
+
+.toolbar__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s cubic-bezier(0.56, 0.01, 0.84, 0.6);
+    &.app-is-ready {
+        transform: translate3d(0,5rem,0rem);
+    }
     .toolbar-is-active & {
         transform: none;
         opacity: 1;
@@ -248,13 +261,13 @@ body {
 }
 
 .toolbar__item {
-    width: 70px;
-    height: 70px;
+    width: 9vw;
+    height: 9vw;
     transition: 0.3s cubic-bezier(.53,-0.37,.47,1.42);
     box-shadow: 0 0 2px 1px rgba($black, 0.2);
     border: 5px solid white;
     border-radius: 100%;
-    margin-right: 2rem;
+    margin-right: 2vw;
     background: white;
     padding: 0.5rem;
     &:last-child {
