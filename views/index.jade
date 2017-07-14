@@ -2,21 +2,12 @@ html(lang='en')
     head  
         title="Mobile Test"
         link(rel="stylesheet", type="text/css", href="/css/desktop.css")
-        script(type="text/javascript", src="/js/vendor/jquery.min.js")
-        script(type="text/javascript", src="/js/Brush.js")
-        script(type="text/javascript", src="/js/Vector/Vector.js")
-        script(type="text/javascript", src="/js/Vector/Plane.js")
-        script(type="text/javascript", src="/js/Vector/Line.js")
-        script(type="text/javascript", src="/js/Helpers.js")
-        script(type="text/javascript", src="/js/Desktop/Desktop.js")
-        script(type="text/javascript", src="/js/Desktop/Desktop.Socket.js")
-        script(type="text/javascript", src="/js/Desktop/Desktop.Interface.js")
-        script(type="text/javascript", src="/js/Desktop/Desktop.Data.js")
-        script(type="text/javascript", src="/js/Desktop/sketchpad.js")
         script(type="text/javascript", src="/socket.io/socket.io.js")
+        script(type="text/javascript", src="/js/Desktop.js")
 body(class="desktop toolbar-is-actifve")
     div(class="canvas-container",id="canvas-container")
-        canvas(id="canvas")
+        canvas(id="canvas-drawing-main",class="canvas")
+        canvas(id="canvas-drawing-tmp",class="canvas")
         div(id="brush-anchor")
             //- div(id="brush-circle",class="bg--blue")
             <svg id="brush-svg" height="100" width="100"><circle id="brush-circle" cx="50" cy="50" r="5" fill="red" /></svg>
@@ -46,8 +37,8 @@ body(class="desktop toolbar-is-actifve")
     //-     div(class="data-item data-item--vaccel")
     //-         div(class="data-value") 100
     //-         div(class="data-label") Vaccel
-    div(class="setup-container")
+    div(id="setup-container",class="setup-container")
         div(class="setup-wrapper")
             h1(class="setup-title") drawmote
             div(class="setup-text") Please open this website on your smartphone and enter the following code
-            div(class="setup-code")
+            div(class="setup-code",id="setup-code")

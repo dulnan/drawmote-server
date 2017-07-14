@@ -23,8 +23,8 @@ Drawmote.Mobile.Interface.init = function() {
 
     // Get Elements
     this.el = {};
-    this.el.brushPreview = document.getElementById("brush-preview");
-    this.el.colorsList = document.getElementById("colors-list");
+    this.el.brushPreview = getElementById("brush-preview");
+    this.el.colorsList = getElementById("colors-list");
 
     // Setup/Pairing Part
     $(".code-numpad-num").on("touchstart", function() {

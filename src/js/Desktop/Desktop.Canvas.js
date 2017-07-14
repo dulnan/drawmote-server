@@ -1,24 +1,20 @@
-'use strict';
-
-var Drawmote = Drawmote || {};
-
 Drawmote.Desktop.Canvas = {};
 
 Drawmote.Desktop.Canvas.init = function() {
-  this.canvas = document.querySelector('#canvas');
+  console.log('canvas init')
+  this.canvas = getElementById('canvas-drawing-main');
 
   this.ctx = this.canvas.getContext('2d');
   
-  this.sketch = document.querySelector('#canvas-container');
+  this.sketch = getElementById('canvas-container');
   this.sketch_style = getComputedStyle(this.sketch);
   this.canvas.width = parseInt(this.sketch_style.getPropertyValue('width'));
   this.canvas.height = parseInt(this.sketch_style.getPropertyValue('height'));
   
   
   // Creating a tmp canvas
-  this.tmp_canvas = document.createElement('canvas');
+  this.tmp_canvas = getElementById('canvas-drawing-tmp');
   this.tmp_ctx = this.tmp_canvas.getContext('2d');
-  this.tmp_canvas.id = 'tmp_canvas';
   this.tmp_canvas.width = this.canvas.width;
   this.tmp_canvas.height = this.canvas.height;
 
@@ -27,10 +23,6 @@ Drawmote.Desktop.Canvas.init = function() {
   this.tmp_ctx.lineCap = 'round';
   this.tmp_ctx.strokeStyle = 'blue';
   this.tmp_ctx.fillStyle = 'blue';
-
-  this.tmp_canvas.classList.add('canvas')
-  
-  this.sketch.appendChild(this.tmp_canvas);
 
   this.mouse = {x: 0, y: 0};
   this.last_mouse = {x: 0, y: 0};

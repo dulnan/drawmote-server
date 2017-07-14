@@ -40,6 +40,6 @@ Plane.prototype.getIntersectionWith = function (line) {
     return line.l.times(d).plus(line.l0);
 };
 
-if (typeof modules !== 'undefined') {
-    modules.export = Line;
-}
+// if (typeof modules !== 'undefined') {
+//     modules.export = Line;
+// }

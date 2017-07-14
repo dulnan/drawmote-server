@@ -4,6 +4,13 @@ var Drawmote = Drawmote || {};
 
 Drawmote.Mobile = {};
 
+//=require Helpers.js
+//=require Brush.js
+//=require Mobile/gyro.js
+//=require Mobile/Mobile.Data.js
+//=require Mobile/Mobile.Interface.js
+//=require Mobile/Mobile.Socket.js
+
 /**
  * Create a new brush and
  * Initialize Socket, Data and Interface

@@ -54,6 +54,6 @@ Line.prototype.rotateAroundLine = function (line, angle) {
     );
 };
 
-if (typeof modules !== 'undefined') {
-    modules.export = Line;
-}
+// if (typeof modules !== 'undefined') {
+//     modules.export = Line;
+// }

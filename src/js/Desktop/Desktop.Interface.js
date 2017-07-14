@@ -1,22 +1,25 @@
-'use strict';
-
-var Drawmote = Drawmote || {};
-
 Drawmote.Desktop.Interface = {};
 
 Drawmote.Desktop.Interface.init = function() {
-    this.el = {};
-    this.el.canvas = document.getElementById("canvas");
-    this.el.toolbar = document.getElementById("toolbar");
 
-    this.el.toolbarItemClear = document.getElementById("toolbar-item--clear");
-    this.el.toolbarBrushPreview = document.getElementById("brush-stroke-preview");
+    this.el = {};
+    this.el.canvas = getElementById("canvas-drawing-main");
+    this.el.toolbar = getElementById("toolbar");
+    this.el.setupContainer = getElementById("setup-container");
+
+    this.el.brushCircle = getElementById("brush-circle");
+    this.el.brushAnchor = getElementById("brush-anchor");
+    this.el.cursorAnchor = getElementById("cursor-anchor");
+
+
+    this.el.toolbarItemClear = getElementById("toolbar-item--clear");
+    this.el.toolbarBrushPreview = getElementById("brush-stroke-preview");
 
     this.el.toolbarItemClear.addEventListener('click', function() {
         Drawmote.Desktop.Canvas.clearCanvas();
     });
 
-    this.el.toolbarColors = document.getElementById("toolbar-colors");
+    this.el.toolbarColors = getElementById("toolbar-colors");
 
     for (var color in Drawmote.Colors) {
         if (Drawmote.Colors.hasOwnProperty(color)) {
@@ -27,7 +30,7 @@ Drawmote.Desktop.Interface.init = function() {
             colorItem.dataset.colorname = Drawmote.Colors[color].name;
             colorItem.style.background = Drawmote.Colors[color].hex;
 
-            if(Drawmote.Colors[color].default) {
+            if (Drawmote.Colors[color].default) {
                 colorItem.classList.add('active');
                 Drawmote.Desktop.Interface.setBrushColor(Drawmote.Colors[color].name);
             }
@@ -69,7 +72,7 @@ Drawmote.Desktop.Interface.init = function() {
     this.toolbarVisibleByPull = false;
     this.cursorInCanvas = true;
 
-    $('body').addClass('app-is-ready');
+    document.body.classList.add('app-is-ready');
 };
 
 Drawmote.Desktop.Interface.prepareDrawView = function() {
@@ -104,42 +107,36 @@ Drawmote.Desktop.Interface.prepareDrawView = function() {
         new Vector(xCenter, yCenter, phoneZPos / 2)
     );
 
-    $(".setup-container").addClass("setup-disappear");
+    this.el.setupContainer.classList.add("setup-disappear");
 
     window.setTimeout(function() {
-        $(".setup-container").addClass("setup-hide");
+        this.el.setupContainer.classList.add("setup-hide");
     }, 400);
 
     Drawmote.Desktop.Interface.runFrame();
 };
 
 Drawmote.Desktop.Interface.setWindowSize = function() {
-    this.windowWidth = $(window).width();
-    this.windowHeight = $(window).height();
+    this.windowWidth = window.innerWidth;
+    this.windowHeight = window.innerHeight;
 };
 
 Drawmote.Desktop.Interface.setBrush = function(brush) {
 
-    $("#brush-circle")[0].setAttribute("r", brush.size / 2);
+    this.el.brushCircle.setAttribute("r", brush.size / 2);
     Drawmote.Desktop.Canvas.setSize(brush.size);
 
-    this.el.toolbarBrushPreview.style.strokeWidth = brush.size;
+    this.el.toolbarBrushPreview.style['strokeWidth'] = brush.size;
 
-
-    // var scale = Drawmote.Helpers.scaleBetween(brush.size, 0.1,1,10,200);
-    // $("#brush-circle").css("transform", "scale("+scale+")");
-
-    // this.sketchpad.color = brush.color.hex;
-    // this.sketchpad.penSize = brush.size;
 };
 
-Drawmote.Desktop.Interface.setBrushMode = function() {
-    this.brushState = brush.mode;
+Drawmote.Desktop.Interface.setBrushMode = function(brushMode) {
+    this.brushState = brushMode;
     this.brushStateChanged = true;
 };
 
 Drawmote.Desktop.Interface.setBrushColor = function(color) {
-    $("#brush-circle")[0].style.fill = Drawmote.Colors[color].hex;
+    this.el.brushCircle.style.fill = Drawmote.Colors[color].hex;
     Drawmote.Desktop.Canvas.setColor(Drawmote.Colors[color].hex);
     this.el.toolbarBrushPreview.style.stroke = Drawmote.Colors[color].hex;
 };
@@ -152,7 +149,7 @@ Drawmote.Desktop.Interface.setBrushColor = function(color) {
  * Normally it ranges somewhere around 60 times per second.
  */
 Drawmote.Desktop.Interface.runFrame = function() {
-    var gyroscope = Drawmote.Desktop.Data.getGyroscopeData();
+    var gyroscope = Drawmote.Data.getGyroscopeData();
 
     var alphaBase = (180 - gyroscope.alpha) - 180;
     // Alpha
@@ -173,8 +170,6 @@ Drawmote.Desktop.Interface.runFrame = function() {
 
     var velocity = 15 - (Math.abs(this.cursorX - this.cursorXprev) + Math.abs(this.cursorY - this.cursorYprev)) / 5;
     velocity = Math.max(velocity, 3);
-
-    console.log(velocity)
 
     if (this.brushState !== "draw") {
         this.brushX = Math.round(this.cursorX);
@@ -198,7 +193,7 @@ Drawmote.Desktop.Interface.runFrame = function() {
     
 
     if (this.brushState === "secondary" || this.toolbarVisibleByPull == true) {
-        $('body').addClass('toolbar-is-active');
+        document.body.classList.add('toolbar-is-active');
 
         for (var i = 0; i < this.toolbarItems.length; ++i) {
             var itemX = this.toolbarItems[i].position.x;
@@ -215,7 +210,7 @@ Drawmote.Desktop.Interface.runFrame = function() {
         }
 
     } else {
-        $('body').removeClass('toolbar-is-active');
+        document.body.classList.remove('toolbar-is-active');
         for (var i = 0; i < this.toolbarItems.length; ++i) {
             if (this.toolbarItems[i].element.classList.contains('hover')) {
                 this.toolbarItems[i].element.click();
@@ -230,27 +225,20 @@ Drawmote.Desktop.Interface.runFrame = function() {
     }
 
 
-    $("#brush-anchor").css("transform", "translate3d("+this.brushX+"px,"+this.brushY+"px,0)");
-    $("#cursor-anchor").css("transform", "translate3d("+this.cursorX+"px,"+this.cursorY+"px,0)");
+    this.el.brushAnchor.style.transform = "translate3d("+this.brushX+"px,"+this.brushY+"px,0)";
+    this.el.cursorAnchor.style.transform = "translate3d("+this.cursorX+"px,"+this.cursorY+"px,0)";
+
 
     if (this.brushState === "draw" && this.toolbarVisibleByPull == false) {
         if (this.brushStateChanged === true) {
-            $(this.el.canvas).trigger("brush:down");
-
             Drawmote.Desktop.Canvas.pointDown(this.brushX, this.brushY);
-
             this.brushStateChanged = false;
         } else {
-            $(this.el.canvas).trigger("brush:move");
-
             Drawmote.Desktop.Canvas.pointMove(this.brushX, this.brushY);
         }
     } else {
         if (this.brushStateChanged === true) {
-            $(this.el.canvas).trigger("brush:up");
-            
             Drawmote.Desktop.Canvas.pointUp();
-
             this.brushStateChanged = false;
         }
     }
@@ -258,8 +246,5 @@ Drawmote.Desktop.Interface.runFrame = function() {
     this.cursorYprev = this.cursorY;
     this.cursorXprev = this.cursorX;
 
-    window.requestAnimationFrame(this.runFrame.bind(this));
-
-    // $(".data-item--alpha .data-value").html(gyroscope.alpha.toFixed(2));
-    // $(".data-item--beta .data-value").html(gyroscope.beta.toFixed(2));
+    window.requestAnimationFrame(Drawmote.Desktop.Interface.runFrame.bind(this));
 };

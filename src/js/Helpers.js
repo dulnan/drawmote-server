@@ -1,7 +1,3 @@
-'use strict';
-
-var Drawmote = Drawmote || {};
-
 Drawmote.Helpers = {};
 
 Drawmote.Helpers.scaleBetween = function(unscaledNum, minAllowed, maxAllowed, min, max, cap) {
@@ -19,4 +15,8 @@ Drawmote.Helpers.pointOutsideCircle = function(x, y, cx, cy, radius) {
 
 Drawmote.Helpers.hasClass = function(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+}
+
+function getElementById(id){
+   return document.getElementById(id);
 }

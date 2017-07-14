@@ -204,6 +204,6 @@ Vector.prototype.getLength = function () {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 };
 
-if (typeof modules !== 'undefined') {
-    modules.export = Line;
-}
+// if (typeof modules !== 'undefined') {
+//     modules.export = Line;
+// }

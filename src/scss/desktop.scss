@@ -47,6 +47,7 @@ body {
 }
 
 #brush-anchor {
+    will-change: transform;
     width: 1px;
     height: 1px;
     position: absolute;
@@ -58,6 +59,7 @@ body {
 }
 
 #brush-svg {
+    will-change: transform;
     width: 100px;
     height: 100px;
     position: absolute;
@@ -70,6 +72,7 @@ body {
 }
 
 #bounds-circle {
+    will-change: transform;
     width: 80px;
     height: 80px;
     border-radius: 100%;
@@ -85,6 +88,7 @@ body {
 }
 
 #cursor-anchor {
+    will-change: transform;
     width: 1px;
     height: 1px;
     position: absolute;
@@ -97,6 +101,7 @@ body {
 }
 
 #cursor-circle {
+    will-change: transform;
     width: 5px;
     height: 5px;
     border-radius: 5px;
