@@ -177,7 +177,7 @@ Drawmote.Desktop.Interface.runFrame = function() {
     }
 
 
-    if (this.cursorY <= (-1 * 0.3 * this.windowHeight) && this.cursorInCanvas) {
+    if (this.cursorX <= (-1 * 0.3 * this.windowWidth) && this.cursorInCanvas) {
         this.cursorInCanvas = false;
 
         if (this.toolbarVisibleByPull == false) {
@@ -186,7 +186,7 @@ Drawmote.Desktop.Interface.runFrame = function() {
             this.toolbarVisibleByPull = false;
         }
     } else {
-        if (this.cursorY >= 40) {
+        if (this.cursorX >= 40) {
             this.cursorInCanvas = true;
         }
     }

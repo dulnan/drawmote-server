@@ -24,7 +24,7 @@ Drawmote.Desktop.init = function() {
     Drawmote.Desktop.Interface.init();
 
     Drawmote.Desktop.Socket.getCode(function(response) {
-        this.elSetupCode.innerHTML = response;
+        // this.elSetupCode.innerHTML = response;
     });
 };
 
