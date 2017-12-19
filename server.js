@@ -4,16 +4,16 @@ var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
 
-app.set('views', __dirname + '/views');
-app.use(express.static(__dirname + '/static'));
+//app.set('views', __dirname + '/views');
+//app.use(express.static(__dirname + '/static'));
 
-app.get('/', function(req, res){
-    res.render('index.jade');
-});
+//app.get('/', function(req, res){
+    //res.render('index.jade');
+//});
 
-app.get('/mobile', function(req, res){
-    res.render('mobile.jade');
-});
+//app.get('/mobile', function(req, res){
+    //res.render('mobile.jade');
+//});
 
 server.listen(process.env.PORT || 8000);
 
@@ -23,7 +23,7 @@ io.sockets.on('connection', function(socket) {
     var deskSocket;
     var mobileSocket;
 
-    socket.on('desktop-getcode', function(data, callback) {
+    socket.on('getPairingToken', function(data, callback) {
         var chars = "123456789";
         var ranLength = 4;
         
