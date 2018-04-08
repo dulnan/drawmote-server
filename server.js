@@ -9,6 +9,8 @@ server.listen(8000);
 io.sockets.on('connection', function(socket){
   console.log('connceted')
 
+  console.log(socket)
+
 	socket.on('createSession', function() {
 	  console.log('createSession');
 		var pair = new SocketPairing(socket);
@@ -36,8 +38,19 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('sendOrientation', function(data) {
-	  console.log('mobile send')
 		if(socket.pair) socket.pair.display.emit('receiveOrientation', data);
+	});
+
+  socket.on('sendSlideData', function(data) {
+		if(socket.pair) socket.pair.display.emit('receiveSlideData', data);
+	});
+
+  socket.on('sendSlideState', function(data) {
+		if(socket.pair) socket.pair.display.emit('receiveSlideState', data);
+	});
+
+  socket.on('sendSwipe', function(data) {
+		if(socket.pair) socket.pair.display.emit('receiveSwipe', data);
 	});
 
   socket.on('sendBrush', function(data) {
@@ -58,10 +71,10 @@ io.sockets.on('connection', function(socket){
 
 
 function getSessionID() {
-	var id = Math.round(Math.random() * 8999) + 1000;
+	var id = Math.round(Math.random() * 89999) + 10000;
 
 	while(connections['s'+id]) {
-		id = Math.round(Math.random() * 8999) + 1000;
+		id = Math.round(Math.random() * 89999) + 10000;
 	}
 
 	return String(id);
