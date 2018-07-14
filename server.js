@@ -41,6 +41,10 @@ io.sockets.on('connection', function(socket){
 		if(socket.pair) socket.pair.display.emit('receiveOrientation', data);
 	});
 
+  socket.on('sendOrientationOffset', function(data) {
+		if(socket.pair) socket.pair.display.emit('receiveOrientationOffset', data);
+	});
+
   socket.on('sendSlideData', function(data) {
 		if(socket.pair) socket.pair.display.emit('receiveSlideData', data);
 	});
