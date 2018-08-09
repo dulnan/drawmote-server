@@ -1,194 +1,128 @@
-var express     = require('express'),
-	app         = express(),
-	server      = require('http').createServer(app),
-	io          = require('socket.io').listen(server),
-	connections = {};
+var stringHash      = require('string-hash');
+var bodyParser      = require('body-parser');
+var crypto          = require('crypto');
+var express         = require('express');
+var http            = require('http');
+var cors            = require('cors');
+var SocketPeer      = require('socketpeer');
+var ExpressBrute    = require('express-brute');
 
-server.listen(8000);
+var bruteStore      = new ExpressBrute.MemoryStore();
+var bruteforce      = new ExpressBrute(bruteStore);
 
-io.sockets.on('connection', function(socket){
-  console.log('connceted')
+var app             = express();
+var server          = http.createServer(app);
 
-  console.log(socket)
+var peer = new SocketPeer({
+  httpServer: server,
+  pairCodeValidator: function (hash) {
+    return peeringHashes.hasOwnProperty(hash)
+  }
+});
 
-	socket.on('createSession', function() {
-	  console.log('createSession');
-		var pair = new SocketPairing(socket);
-		socket.pair = pair;
-		socket.controller = false;
-		socket.emit('initialState', {id:pair.id, session: pair.session, paired: pair.connected});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
 
-		connections[pair.sessionName] = pair;
-	});
+var codes = {}
+var peeringHashes = {}
+var sessions = []
 
-	socket.on('sessionConnect', function(data) {
-	  console.log('seesion connect')
-		var pair = connections['s'+data.session];
-		socket.controller = true;
 
-		if (pair) {
-			pair.controller = socket;
-			pair.display.emit('connectionEstablished');
-			pair.controller.emit('connectionEstablished');
-			pair.connected = true;
-			socket.pair = pair;
-		} else {
-      socket.emit('connectionFailed', 'FAILED');
-    }
-	});
+function sha256 (data) {
+  return crypto.createHash('sha256').update(data).digest('hex');
+}
 
-	socket.on('sendOrientation', function(data) {
-		if(socket.pair) socket.pair.display.emit('receiveOrientation', data);
-	});
+function md5 (data) {
+  return crypto.createHash('md5').update(data).digest('hex');
+}
 
-  socket.on('sendOrientationOffset', function(data) {
-		if(socket.pair) socket.pair.display.emit('receiveOrientationOffset', data);
-	});
+function buildRandomHex () {
+  return crypto.randomBytes(64).toString('hex');
+}
 
-  socket.on('sendSlideData', function(data) {
-		if(socket.pair) socket.pair.display.emit('receiveSlideData', data);
-	});
+function buildPeeringHash () {
+  let hash = buildRandomHex()
 
-  socket.on('sendSlideState', function(data) {
-		if(socket.pair) socket.pair.display.emit('receiveSlideState', data);
-	});
+  do {
+    hash = sha256(hash + Date.now() + '/=@2(*£àéZF?=}[½}/%)')
+  } while (peeringHashes[hash])
 
-  socket.on('sendSwipe', function(data) {
-		if(socket.pair) socket.pair.display.emit('receiveSwipe', data);
-	});
+  peeringHashes[hash] = true
 
-  socket.on('sendBrush', function(data) {
-		if(socket.pair) socket.pair.controller.emit('receiveBrush', data);
-	});
+  return hash
+}
 
-	socket.on('disconnect', function () {
-		if (socket.pair) {
-			if (socket.controller) {
-				clearController(socket.pair);
-			} else {
-				clearSession(socket.pair);
-			}
-			socket.pair = null;
-		}
-	});
+function codeIsValid (code) {
+  if (!Number.isInteger(code)) {
+    return false
+  }
+
+  const codeString = code.toString()
+
+  if (codeString.length !== 6) {
+    return false
+  }
+
+  if (!codes.hasOwnProperty(codeString)) {
+    return false
+  }
+
+  return true
+}
+
+function getPeeringHashByCode (code) {
+  return codes[String(code)]
+}
+
+function buildPairingCode (id) {
+  const timestamp = new Date();
+  const hash = stringHash(id);
+
+  let code = '000000'
+
+  do {
+    code = String(Math.round(hash * Math.random() * 89999) / Math.random()).substring(0, 6);
+  } while (codes[code])
+
+  codes[code] = id
+
+  return code
+}
+
+
+app.get('/code/get', function(req, res) {
+  const hash = buildPeeringHash()
+  const code = buildPairingCode(hash)
+
+  res.json({
+    hash: hash,
+    code: code
+  });
 });
 
 
-function getSessionID() {
-	var id = Math.round(Math.random() * 89999) + 10000;
+app.post('/code/validate', function(req, res) {
+  const code = req.body.code;
 
-	while(connections['s'+id]) {
-		id = Math.round(Math.random() * 89999) + 10000;
-	}
-
-	return String(id);
-}
-
-function clearSession(pair) {
-	pair.display = null;
-	pair.connected = false;
-
-	if (pair.controller) {
-		pair.controller.emit('display-disconnected');
-		pair.controller.pair = null;
-		pair.controller = null;
-	}
-
-	delete connections[pair.sessionName];
-}
-
-function clearController(pair) {
-	pair.controller = null;
-	pair.connected = false;
-
-	if (pair.display) pair.display.emit('controller-disconnected');
-}
-
-var SocketPairing = function(socket) {
-	var sessionID = getSessionID(),
-		p = {
-			display: socket,
-			connected: false,
-			controller: null,
-			id: socket.id,
-			session: sessionID,
-			sessionName: 's'+sessionID
-		};
-
-	return p;
-}
+  if (codeIsValid(code)) {
+    res.json({
+      isValid: true,
+      hash: getPeeringHashByCode(code),
+      code: code
+    })
+  } else {
+    res.json({
+      isValid: false
+    })
+  }
+});
 
 
+peer.on('connect', function (test) {
+  // connected via WebSockets
+  console.log('connect')
+  console.log(test)
+})
 
-
-//var express = require('express');
-//var app = express();
-//var server = require('http').createServer(app);
-//var io = require('socket.io').listen(server);
-
-
-////app.set('views', __dirname + '/views');
-////app.use(express.static(__dirname + '/static'));
-
-////app.get('/', function(req, res){
-    ////res.render('index.jade');
-////});
-
-////app.get('/mobile', function(req, res){
-    ////res.render('mobile.jade');
-////});
-
-//server.listen(process.env.PORT || 8000);
-
-//var regUsers = {};
-
-//io.sockets.on('connection', function(socket) {
-    //var deskSocket;
-    //var mobileSocket;
-
-    //socket.on('getPairingToken', function(data, callback) {
-        //var chars = "123456789";
-        //var ranLength = 4;
-        
-        //var code = "";
-        
-        //for(var i=0; i<ranLength; i++) {
-            //var char = chars[Math.floor(Math.random() * chars.length)];
-            //code += char;
-        //}
-        //code = "1234";
-        //regUsers[code] = deskSocket = socket;
-        //callback(code);
-    //});
-    
-    //socket.on('mobile-register', function(data, callback) {
-        //mobileSocket = socket;
-
-        //if(typeof(regUsers[data.id]) !== "undefined") {
-            //deskSocket = regUsers[data.id];
-            //deskSocket.emit('mobile-on');
-            
-            //callback("valid");
-        //} else {
-            //callback("invalid");
-        //}
-    //});
-
-    //socket.on('mobile-orientation', function(orientation) {
-        //if(typeof(deskSocket) !== "undefined" && deskSocket !== null) {
-            //deskSocket.emit('orientation', orientation);
-        //}
-    //});
-
-    //socket.on('brush-change', function(brush) {
-        //if(typeof(deskSocket) !== "undefined" && deskSocket !== null) {
-            //deskSocket.emit('brush-change', brush);
-        //}
-    //});
-
-    //socket.on('brush-mode', function(brushState) {
-        //if(typeof(deskSocket) !== "undefined" && deskSocket !== null) {
-            //deskSocket.emit('brush-mode', brushState);
-        //}
-    //});
-//});
+server.listen(3000);
