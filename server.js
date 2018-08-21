@@ -71,6 +71,18 @@ function codeIsValid (code) {
   return true
 }
 
+function hashIsValid (hash, code) {
+  const codeString = code.toString()
+
+  if (codeIsValid(code)) {
+    if (codes[codeString] === hash) {
+      return true
+    }
+  }
+
+  return false
+}
+
 function getPeeringHashByCode (code) {
   return codes[String(code)]
 }
@@ -110,6 +122,21 @@ app.post('/code/validate', function(req, res) {
       isValid: true,
       hash: getPeeringHashByCode(code),
       code: code
+    })
+  } else {
+    res.json({
+      isValid: false
+    })
+  }
+});
+
+app.post('/hash/validate', function(req, res) {
+  const code = req.body.pairing.code;
+  const hash = req.body.pairing.hash;
+
+  if (hashIsValid(hash, code)) {
+    res.json({
+      isValid: true
     })
   } else {
     res.json({
