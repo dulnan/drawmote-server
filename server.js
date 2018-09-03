@@ -102,6 +102,9 @@ function buildPairingCode (id) {
   return code
 }
 
+app.get('/', function(req, res) {
+  res.redirect('https://drawmote.app')
+});
 
 app.get('/code/get', function(req, res) {
   const hash = buildPeeringHash()
