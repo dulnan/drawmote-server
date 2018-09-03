@@ -147,9 +147,6 @@ app.post('/hash/validate', function(req, res) {
 
 
 peer.on('connect', function (test) {
-  // connected via WebSockets
-  console.log('connect')
-  console.log(test)
 })
 
-server.listen(3000);
+server.listen(process.env.PORT || 3000);
