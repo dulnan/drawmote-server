@@ -35,7 +35,7 @@ exports.isString = function (v) {
  * @returns {Boolean}
  */
 exports.codeIsValid = function (code) {
-  if (!isString(code)) {
+  if (!exports.isString(code)) {
     return false
   }
 
