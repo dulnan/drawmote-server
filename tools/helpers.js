@@ -65,5 +65,5 @@ exports.hashIsValid = function (hash) {
  * @param {Pairing} pairing 
  */
 exports.pairingIsValid = function (pairing) {
-  return codeIsValid(pairing.code) && hashIsValid(pairing.hash)
+  return exports.codeIsValid(pairing.code) && exports.hashIsValid(pairing.hash)
 }
