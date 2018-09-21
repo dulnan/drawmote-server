@@ -1,3 +1,9 @@
+/**
+ * Try to connect to a redis instance. If this failes, create a
+ * redis-mock instance for local development.
+ * 
+ * @returns {RedisClient}
+ */
 function getRedisClient () {
   return new Promise(async (resolve, reject) => {
     const url = process.env.REDIS_URL || '//localhost:6379'

@@ -1,61 +1,38 @@
-const EXPIRE_CODE = 68
-const EXPIRE_PAIRED = 60 * 60 * 24 * 7
-
-const HASH_SALT = process.env.HASH_SALT || '/=@2(*£àéZF?=}[½}/%)'
-
+const helpers = require('../tools/helpers')
+const stringHash = require('string-hash')
 const { promisify } = require('util')
 
-var stringHash      = require('string-hash')
-var crypto          = require('crypto')
+const EXPIRE_CODE = 130 // 130 seconds
+const EXPIRE_PAIRED = 60 * 60 * 24 * 7 // 7 days
 
-
+/**
+ * A pairing.
+ * 
+ * @param {String} code The pairing code.
+ * @param {String} hash The pairing hash.
+ */
 function Pairing (code, hash) {
   this.code = code
   this.hash = hash
 }
 
+/**
+ * A validation.
+ * 
+ * @param {Boolean} isValid 
+ */
 function Validation (isValid) {
   this.isValid = isValid
 }
 
-function buildRandomHex () {
-  const random = crypto.randomBytes(64).toString('hex') + Date.now() + HASH_SALT
-  return crypto.createHash('sha256').update(random).digest('hex')
-}
-
-function buildRandomCode (hash) {
-  return String(Math.round(hash * Math.random() * 89999) / Math.random()).substring(0, 6)
-}
-
-function isString (v) {
-  return typeof v === 'string' || v instanceof String
-}
-
-function codeIsValid (code) {
-  if (!isString(code)) {
-    return false
-  }
-
-  if (code.length !== 6) {
-    return false
-  }
-
-  if (/^\d+$/.test(code) === false) {
-    return false
-  }
-
-  return true
-}
-
-function hashIsValid (hash) {
-  return true
-}
-
-function pairingIsValid (pairing) {
-  return codeIsValid(pairing.code) && hashIsValid(pairing.hash)
-}
-
+/**
+ * Handles all things related to generating pairing codes and hashes
+ * and validating them.
+ */
 class Store {
+  /**
+   * @param {RedisClient} redisClient 
+   */
   constructor(redisClient) {
     this.redisGet = promisify(redisClient.get).bind(redisClient)
     this.redisSet = promisify(redisClient.set).bind(redisClient)
@@ -64,88 +41,116 @@ class Store {
     this.redisExpire = promisify(redisClient.expire).bind(redisClient)
   }
 
+  /**
+   * Checks if the given hash exists.
+   * 
+   * @param {String} hash 
+   */
   async keyExists(hash) {
-    const res = await this.redisExists(hash);
-    return res === 1;
+    const res = await this.redisExists(hash)
+    return res === 1
   }
 
+  /**
+   * Generates a random hash and checks that it's unique.
+   * 
+   * @returns {String} The generated hash.
+   */
   async generateHash() {
-    let alreadyUsed = false;
-    let hash = '';
+    let alreadyUsed = false
+    let hash = ''
 
     do {
-      hash = buildRandomHex();
-      alreadyUsed = await this.keyExists(hash);
-    } while (alreadyUsed);
+      hash = helpers.buildRandomHex()
+      alreadyUsed = await this.keyExists(hash)
+    } while (alreadyUsed)
 
     return hash;
   }
 
+  /**
+   * Generates a random code and checks that it's unique.
+   * 
+   * @returns {String} The generated code.
+   */
   async generateCode(hash) {
-    const numericHash = stringHash(hash);
-    let alreadyUsed = false;
-    let code = '000000';
+    const numericHash = stringHash(hash)
+    let alreadyUsed = false
+    let code = '000000'
 
     do {
-      code = buildRandomCode(numericHash)
-      alreadyUsed = await this.keyExists(code);
-    } while (alreadyUsed);
+      code = helpers.buildRandomCode(numericHash)
+      alreadyUsed = await this.keyExists(code)
+    } while (alreadyUsed)
 
     return code;
   }
 
-   generatePairing () {
-    return new Promise(async (resolve, reject) => {
-      const hash = await this.generateHash();
-      const code = await this.generateCode(hash);
+  /**
+   * Generate a pairing combination of hash and code.
+   * Both are stored in redis with a short expire time.
+   * 
+   * @returns {Pairing} The generated pairing.
+   */
+   async generatePairing () {
+    const hash = await this.generateHash()
+    const code = await this.generateCode(hash)
 
-      const hashIsSet = await this.redisSet(hash, code, 'EX', EXPIRE_CODE) === 'OK';
-      const codeIsSet = await this.redisSet(code, hash, 'EX', EXPIRE_CODE) === 'OK';
+    const hashIsSet = await this.redisSet(hash, code, 'EX', EXPIRE_CODE) === 'OK'
+    const codeIsSet = await this.redisSet(code, hash, 'EX', EXPIRE_CODE) === 'OK'
 
-      if (hashIsSet && codeIsSet) {
-        resolve(new Pairing(code, hash));
-      } else {
-        reject(new Error('GeneratingPairFailed'));
-      }
-    })
+    if (hashIsSet && codeIsSet) {
+      return new Pairing(code, hash)
+    } else {
+      throw new Error('PairingGenerateFailed')
+    }
   }
 
-  getPairingFromCode (code) {
-    return new Promise(async (resolve, reject) => {
-      if (codeIsValid(code)) {
-        const exists = await this.keyExists(code)
+  /**
+   * Gets the pairing from a code. If it exists, the code is deleted
+   * and the expire time of the hash increased.
+   * 
+   * @param {String} code The code to get the pairing from.
+   * @returns {(Pairing|Object)} A pairing or an empty object if no pairing was found.
+   */
+  async getPairingFromCode (code) {
+    if (helpers.codeIsValid(code)) {
+      const exists = await this.keyExists(code)
 
-        if (exists) {
-          const hash = await this.redisGet(code)
-          await this.redisDel(code)
-          await this.redisExpire(hash, EXPIRE_PAIRED)
+      if (exists) {
+        const hash = await this.redisGet(code)
+        await this.redisDel(code)
+        await this.redisExpire(hash, EXPIRE_PAIRED)
 
-          resolve(new Pairing(code, hash))
-        } 
-      }
-
-      resolve({})
-    })
+        return new Pairing(code, hash)
+      } 
+    }
+    return {}
   }
 
-  validatePairing (pairing) {
-    return new Promise(async (resolve, reject) => {
-      let isValid = false
+  /**
+   * Check if the given pairing is valid, both as values and as
+   * stored keys in redis.
+   * 
+   * @param {Pairing} pairing 
+   * @returns {Validation} Object with isValid property.
+   */
+  async validatePairing (pairing) {
+    let isValid = false
 
-      if (pairingIsValid(pairing)) {
-        const hashExists = await this.keyExists(pairing.hash)
+    if (helpers.pairingIsValid(pairing)) {
+      const hashExists = await this.keyExists(pairing.hash)
 
-        if (hashExists) {
-          const code = await this.redisGet(pairing.hash)
+      if (hashExists) {
+        const code = await this.redisGet(pairing.hash)
 
-          if (pairing.code === code) {
-            isValid = true
-          }
+        if (pairing.code === code) {
+          isValid = true
         }
       }
+    }
 
-      resolve(new Validation(isValid))
-    })
+    return new Validation(isValid)
   }
 }
 
