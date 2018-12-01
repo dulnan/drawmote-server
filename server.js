@@ -3,18 +3,21 @@
 
 const PeerSoxServer = require('peersox').default
 const ExpressBrute = require('express-brute')
+const express = require('express')
 const redis = require('redis')
 const BruteRedis = require('express-brute-redis')
 
 // Create a new redis client.
 const url = process.env.REDIS_URL
+const port = process.env.PORT || 3000
 
 if (url) {
   const redisClient = redis.createClient(url)
+  const app = express()
 
   // Init the PeerSox server when the redis client is ready.
   redisClient.on('ready', function () {
-    console.log('Connected to Redis at')
+    console.log('Connected to Redis at ' + port)
 
     // Use the redis client as the store for express-brute.
     const bruteStore = new BruteRedis({
@@ -29,6 +32,8 @@ if (url) {
     // Instantiate the PeerSox server.
     new PeerSoxServer({
       storage: redisClient,
+      app: app,
+      port: port,
       middleware: [
         bruteforce.prevent
       ]
