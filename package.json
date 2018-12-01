@@ -2,7 +2,7 @@
   "name": "drawmote-server",
   "version": "1.0.0",
   "description": "",
-  "main": "sever.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
@@ -10,14 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "cors": "^2.8.4",
-    "express": "^4.16.3",
     "express-brute": "^1.0.1",
     "express-brute-redis": "0.0.1",
-    "express-fingerprint": "^1.1.2",
+    "peersox": "0.0.2",
     "redis": "^2.8.0",
-    "socketpeer": "github:dulnan/socketpeer#update-dependencies",
     "string-hash": "^1.1.3"
   },
   "devDependencies": {
