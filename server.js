@@ -8,15 +8,17 @@ const redis = require('redis')
 const BruteRedis = require('express-brute-redis')
 
 // Create a new redis client.
+
 const url = process.env.REDIS_URL
-const port = process.env.PORT || 3000
 
 if (url) {
-  const redisClient = redis.createClient(url)
+  console.log('sadfasdf')
   const app = express()
+  const port = process.env.PORT || 3000
+  const redisClient = redis.createClient(url)
 
   // Init the PeerSox server when the redis client is ready.
-  redisClient.on('ready', function () {
+  redisClient.on('ready', () => {
     console.log('Connected to Redis at ' + port)
 
     // Use the redis client as the store for express-brute.
