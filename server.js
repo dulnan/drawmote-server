@@ -6,10 +6,21 @@ const ExpressBrute = require('express-brute')
 const express = require('express')
 const redis = require('redis')
 const http = require('http')
+const cors = require('cors')
 const BruteRedis = require('express-brute-redis')
+
+let corsOptions = {}
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').load()
+} else {
+  corsOptions = {
+    origin: [
+      'https://drawmote.app',
+      'https://develop.drawmote.app'
+    ],
+    optionsSuccessStatus: 200
+  }
 }
 
 const SID = process.env.TWILIO_ACCOUNT_SID
@@ -23,10 +34,12 @@ if (!SID || !TOKEN) {
 const twilio = require('twilio')(SID, TOKEN)
 
 const url = process.env.REDIS_URL
+const port = process.env.PORT || 3000
 
 let app = express()
 let server = http.createServer(app)
-let port = process.env.PORT || 3000
+
+app.use(cors(corsOptions))
 
 let cachedToken = null
 
