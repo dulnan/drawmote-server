@@ -4,16 +4,19 @@
 const PeerSoxServer = require('peersox').default
 const ExpressBrute = require('express-brute')
 const express = require('express')
-const redis = require('redis')
 const http = require('http')
 const cors = require('cors')
 const BruteRedis = require('express-brute-redis')
 
 let corsOptions = {}
 
+let redis
+
 if (process.env.NODE_ENV !== 'production') {
+  redis = require('redis-mock')
   require('dotenv').load()
 } else {
+  redis = require('redis')
   corsOptions = {
     origin: [
       'https://drawmote.app',
@@ -81,6 +84,8 @@ const getConfig = () => {
   }
 }
 
+let peersoxServer
+
 if (url) {
   const redisClient = redis.createClient(url)
 
@@ -88,33 +93,33 @@ if (url) {
   redisClient.on('error', (error) => {
     console.log(error)
   })
-  redisClient.on('ready', () => {
-    console.log('Connected to Redis at ' + port)
 
-    // Use the redis client as the store for express-brute.
-    const bruteStore = new BruteRedis({
-      client: redisClient
-    })
+  console.log('Connected to Redis at ' + port)
 
-    // Instantiate the express-brute middleware.
-    const bruteforce = new ExpressBrute(bruteStore, {
-      freeRetries: 20
-    })
+  // Use the redis client as the store for express-brute.
+  const bruteStore = new BruteRedis({
+    client: redisClient
+  })
 
-    // Instantiate the PeerSox server.
-    new PeerSoxServer({
-      storage: redisClient,
-      app: app,
-      server: server,
-      port: port,
-      config: getConfig,
-      middleware: [
-        bruteforce.prevent
-      ]
-    })
+  // Instantiate the express-brute middleware.
+  const bruteforce = new ExpressBrute(bruteStore, {
+    freeRetries: 20
+  })
+
+  // Instantiate the PeerSox server.
+  peersoxServer = new PeerSoxServer(redisClient, {
+    app: app,
+    server: server,
+    port: port,
+    config: getConfig,
+    middleware: [
+      bruteforce.prevent
+    ]
   })
 } else {
-  new PeerSoxServer({
+  const redisClient = redis.createClient()
+
+  peersoxServer = new PeerSoxServer(redisClient, {
     app,
     server,
     port,

@@ -15,7 +15,7 @@
     "express": "^4.16.4",
     "express-brute": "^1.0.1",
     "express-brute-redis": "0.0.1",
-    "peersox": "0.0.8",
+    "peersox": "github:dulnan/peersox",
     "redis": "^2.8.0",
     "string-hash": "^1.1.3",
     "twilio": "^3.25.0"
