@@ -4,19 +4,29 @@
 const PeerSoxServer = require('peersox').default
 const ExpressBrute = require('express-brute')
 const express = require('express')
+const helmet = require('helmet')
 const http = require('http')
 const cors = require('cors')
 const BruteRedis = require('express-brute-redis')
+const redis = require('redis')
 
 let corsOptions = {}
 
-let redis
-
 if (process.env.NODE_ENV !== 'production') {
-  redis = require('redis-mock')
+  const ip = require('ip')
   require('dotenv').load()
+
+  corsOptions = {
+    origin: [
+      'http://localhost:8080',
+      'http://localhost:8081',
+      'http://192.168.80.43:8080',
+      `http://${ip.address()}:8080`,
+      `http://${ip.address()}:8081`,
+    ],
+    optionsSuccessStatus: 200
+  }
 } else {
-  redis = require('redis')
   corsOptions = {
     origin: [
       'https://drawmote.app',
@@ -36,13 +46,16 @@ if (!SID || !TOKEN) {
 
 const twilio = require('twilio')(SID, TOKEN)
 
-const url = process.env.REDIS_URL
+const url = process.env.REDIS_URL || 'redis://localhost:6379'
 const port = process.env.PORT || 3000
 
 let app = express()
 let server = http.createServer(app)
 
+app.use(helmet())
 app.use(cors(corsOptions))
+
+app.use(express.json({ limit: '20kb' }))
 
 let cachedToken = null
 
@@ -112,18 +125,10 @@ if (url) {
     server: server,
     port: port,
     config: getConfig,
+    allowOrigins: corsOptions.origin,
     middleware: [
       bruteforce.prevent
     ]
-  })
-} else {
-  const redisClient = redis.createClient()
-
-  peersoxServer = new PeerSoxServer(redisClient, {
-    app,
-    server,
-    port,
-    config: getConfig
   })
 }
 
