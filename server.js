@@ -12,7 +12,9 @@ const redis = require('redis')
 
 let corsOptions = {}
 
-if (process.env.NODE_ENV !== 'production') {
+const IS_DEV = process.env.NODE_ENV !== 'production'
+
+if (IS_DEV) {
   const ip = require('ip')
   require('dotenv').load()
 
@@ -116,7 +118,7 @@ if (url) {
 
   // Instantiate the express-brute middleware.
   const bruteforce = new ExpressBrute(bruteStore, {
-    freeRetries: 20
+    freeRetries: IS_DEV ? 100 : 12
   })
 
   // Instantiate the PeerSox server.
