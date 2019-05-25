@@ -118,8 +118,11 @@ if (url) {
 
   // Instantiate the express-brute middleware.
   const bruteforce = new ExpressBrute(bruteStore, {
-    freeRetries: IS_DEV ? 100 : 12
+    freeRetries: IS_DEV ? 100 : 40
   })
+
+  app.enable('trust proxy')
+  app.set('trust proxy', true)
 
   // Instantiate the PeerSox server.
   peersoxServer = new PeerSoxServer(redisClient, {
