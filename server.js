@@ -7,7 +7,6 @@ const express = require('express')
 const helmet = require('helmet')
 const http = require('http')
 const cors = require('cors')
-const BruteRedis = require('express-brute-redis')
 const redis = require('redis')
 
 let corsOptions = {}
@@ -111,16 +110,6 @@ if (url) {
 
   console.log('Connected to Redis at ' + port)
 
-  // Use the redis client as the store for express-brute.
-  const bruteStore = new BruteRedis({
-    client: redisClient
-  })
-
-  // Instantiate the express-brute middleware.
-  const bruteforce = new ExpressBrute(bruteStore, {
-    freeRetries: IS_DEV ? 100 : 40
-  })
-
   app.enable('trust proxy')
   app.set('trust proxy', true)
 
@@ -130,10 +119,7 @@ if (url) {
     server: server,
     port: port,
     config: getConfig,
-    allowOrigins: corsOptions.origin,
-    middleware: [
-      bruteforce.prevent
-    ]
+    allowOrigins: corsOptions.origin
   })
 }
 
