@@ -11,18 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^6.1.0",
-    "express": "^4.16.4",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
     "express-brute": "^1.0.1",
     "express-brute-redis": "0.0.1",
-    "helmet": "^3.15.0",
-    "peersox": "^0.1.0",
+    "helmet": "^3.18.0",
+    "peersox": "^0.3.0",
     "redis": "^2.8.0",
     "string-hash": "^1.1.3",
-    "twilio": "^3.25.0"
+    "twilio": "^3.31.1"
   },
   "devDependencies": {
     "ip": "^1.1.5",
-    "redis-mock": "^0.32.0"
+    "redis-mock": "^0.44.0"
   }
 }
