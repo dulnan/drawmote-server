@@ -2,7 +2,6 @@
 // middleware that prevents brute force attacks on the server.
 
 const PeerSoxServer = require('peersox').default
-const ExpressBrute = require('express-brute')
 const express = require('express')
 const helmet = require('helmet')
 const http = require('http')
@@ -11,11 +10,12 @@ const redis = require('redis')
 
 let corsOptions = {}
 
+require('dotenv').config()
+
 const IS_DEV = process.env.NODE_ENV !== 'production'
 
 if (IS_DEV) {
   const ip = require('ip')
-  require('dotenv').config()
 
   corsOptions = {
     origin: [
@@ -102,28 +102,32 @@ let peersoxServer
 
 if (url) {
   const redisClient = redis.createClient({
-    host: process.env.REDIS_URL,
-    port: process.env.REDIS_PORT,
-    password: process.env.REDIS_PASSWORD
+    url: process.env.REDIS_URL
   })
 
-  // Init the PeerSox server when the redis client is ready.
   redisClient.on('error', (error) => {
     console.log(error)
   })
 
-  console.log('Connected to Redis at ' + port)
+  redisClient.on('warning', (warning) => {
+    console.log(warning)
+  })
 
-  app.enable('trust proxy')
-  app.set('trust proxy', true)
+  // Init the PeerSox server when the redis client is ready.
+  redisClient.on('ready', () => {
+    console.log('Connected to Redis at ' + port)
 
-  // Instantiate the PeerSox server.
-  peersoxServer = new PeerSoxServer(redisClient, {
-    app: app,
-    server: server,
-    port: port,
-    config: getConfig,
-    allowOrigins: corsOptions.origin
+    app.enable('trust proxy')
+    app.set('trust proxy', true)
+
+    // Instantiate the PeerSox server.
+    peersoxServer = new PeerSoxServer(redisClient, {
+      app: app,
+      server: server,
+      port: port,
+      config: getConfig,
+      allowOrigins: corsOptions.origin
+    })
   })
 }
 
