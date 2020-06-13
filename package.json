@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "ip": "^1.1.5",
+    "prettier": "^2.0.5",
     "redis-mock": "^0.44.0"
   }
 }

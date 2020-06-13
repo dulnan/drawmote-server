@@ -23,16 +23,13 @@ if (IS_DEV) {
       'http://localhost:8081',
       'http://192.168.80.43:8080',
       `http://${ip.address()}:8080`,
-      `http://${ip.address()}:8081`,
+      `http://${ip.address()}:8081`
     ],
     optionsSuccessStatus: 200
   }
 } else {
   corsOptions = {
-    origin: [
-      'https://drawmote.app',
-      'https://develop.drawmote.app'
-    ],
+    origin: ['https://drawmote.app', 'https://develop.drawmote.app'],
     optionsSuccessStatus: 200
   }
 }
@@ -63,14 +60,17 @@ let cachedToken = null
 // 60 Minutes.
 const TOKEN_TTL = 60 * 60
 
-function getNewToken () {
-  twilio.tokens.create({
-    ttl: TOKEN_TTL
-  }, function(err, token) {
-    if (!err && token) {
-      cachedToken = token;
+function getNewToken() {
+  twilio.tokens.create(
+    {
+      ttl: TOKEN_TTL
+    },
+    function (err, token) {
+      if (!err && token) {
+        cachedToken = token
+      }
     }
-  })
+  )
 }
 
 // fetch token initially
@@ -80,7 +80,7 @@ setInterval(getNewToken, (TOKEN_TTL - 10) * 1000)
 
 const getConfig = () => {
   return {
-    iceServers: cachedToken.iceServers.map(item => {
+    iceServers: cachedToken.iceServers.map((item) => {
       let newItem = {
         urls: item.url
       }
@@ -101,7 +101,11 @@ const getConfig = () => {
 let peersoxServer
 
 if (url) {
-  const redisClient = redis.createClient(url)
+  const redisClient = redis.createClient({
+    host: process.env.REDIS_URL,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD
+  })
 
   // Init the PeerSox server when the redis client is ready.
   redisClient.on('error', (error) => {
