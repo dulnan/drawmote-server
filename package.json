@@ -12,7 +12,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-brute": "^1.0.1",
     "express-brute-redis": "0.0.1",
     "helmet": "^3.18.0",
